@@ -450,7 +450,7 @@ details.pick summary span{font-weight:400;color:var(--muted)}
 'use strict';
 const LS = 'kolekcionar.v1';
 const MAX_ITEMS = 3000;
-const S = { cols: [], view: 'home', colId: null, edId: null, varId: null, tab: 'album', filter: 'all', mode: 'toggle', q: '', confirm: null, sync: 'local', newMode: 'range', addMode: 'range', homeQ: '', homeCat: 'all', homeSort: 'mine' };
+const S = { cols: [], view: 'home', colId: null, edId: null, varId: null, tab: 'album', filter: 'all', mode: 'toggle', q: '', confirm: null, sync: 'local', newMode: 'range', addMode: 'range', homeQ: '', homeCat: 'all', homeSort: 'mine', fbType: 'Idea', fbSent: false };
 try { const hp = JSON.parse(localStorage.getItem('kolekcionar.home') || '{}'); if (hp.sort) S.homeSort = hp.sort; } catch (e) {}
 let DB = null, UID = null, DL = null;
 const timers = {}, chains = {}, pending = new Set();
@@ -692,7 +692,7 @@ function syncHTML() {
 /* ---------- views ---------- */
 function render() {
   const v = S.view;
-  $('#app').innerHTML = v === 'col' ? viewCol() : v === 'edit' ? viewEdit() : v === 'new' ? viewNew() : v === 'settings' ? viewSkins() : viewHome();
+  $('#app').innerHTML = v === 'col' ? viewCol() : v === 'edit' ? viewEdit() : v === 'new' ? viewNew() : v === 'settings' ? viewSkins() : v === 'feedback' ? viewFeedback() : viewHome();
 }
 
 const SORTS = [['mine', 'My order'], ['az', 'Name A–Z'], ['za', 'Name Z–A'], ['most', 'Most complete'], ['least', 'Least complete']];
@@ -720,6 +720,20 @@ function cardsHTML() {
 }
 function saveHomePrefs() { try { localStorage.setItem('kolekcionar.home', JSON.stringify({ sort: S.homeSort })); } catch (e) {} }
 
+const FB_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSea40DArCVmv6iyeKB77mWZiNpS2U_73EJ3kQJKYhLHkSh1jQ/formResponse';
+function viewFeedback() {
+  let h = '<header class="top"><button class="iconbtn" type="button" data-act="home" aria-label="Back">' + ICON.back + '</button><h1>Send feedback</h1></header>';
+  if (S.fbSent) return h + '<div class="box" style="text-align:center;align-items:center"><h3 style="font-size:22px">Thank you!</h3><p class="muted" style="margin:0">Your message was sent. We read every one.</p><button class="btn" type="button" data-act="home">Back to collections</button></div>';
+  return h + '<form class="box" data-form="feedback" style="margin-top:6px"><p class="muted" style="margin:0">Tell us what you would change or add, or report a problem.</p>' +
+    '<div class="field"><span class="label">Type</span><div class="seg" role="group" aria-label="Feedback type">' + ['Idea', 'Bug', 'Other'].map(t => '<button type="button" data-act="fbtype" data-id="' + t + '" aria-pressed="' + (S.fbType === t) + '">' + t + '</button>').join('') + '</div></div>' +
+    '<label class="field"><span class="label">Message</span><textarea id="fbMsg" maxlength="4000" placeholder="What would make GotGotNeed better for you?"></textarea></label>' +
+    '<label class="field"><span class="label">Email (optional)</span><input id="fbEmail" type="email" autocomplete="email" placeholder="Only if you want a reply"></label>' +
+    '<p id="fbErr" class="hint" style="color:var(--danger);margin:0" hidden></p>' +
+    '<button class="btn block" type="submit" id="fbSend">Send</button>' +
+    (window.claude ? '<p class="hint" style="margin:0">Sending works in the GotGotNeed app at <a href="https://vojnovicspasoje.github.io/gotgotneed/" target="_blank" rel="noopener">vojnovicspasoje.github.io/gotgotneed</a>.</p>' : '') +
+    '<p class="hint" style="margin:0">Your message goes to the GotGotNeed team. See the <a href="https://vojnovicspasoje.github.io/gotgotneed/privacy.html" target="_blank" rel="noopener">privacy policy</a>.</p></form>';
+}
+
 function viewHome() {
   const cols = S.cols;
   const tot = cols.reduce((a, c) => { const s = colStats(c); a.o += s.owned; a.t += s.total; a.d += s.dups; return a; }, { o: 0, t: 0, d: 0 });
@@ -744,7 +758,7 @@ function viewHome() {
     '<div class="rowwrap"><button class="btn small ghost" type="button" data-act="export">Export (.json)</button>' +
     '<label class="btn small ghost" for="importFile">Import from file</label><input id="importFile" type="file" accept=".json,application/json" hidden></div>' +
     '<div id="exportOut"></div></div></details>' +
-    '<p class="hint" style="margin:22px 0 0;text-align:center"><a href="https://vojnovicspasoje.github.io/gotgotneed/privacy.html" target="_blank" rel="noopener" style="color:var(--muted)">Privacy policy</a></p>';
+    '<p class="hint" style="margin:22px 0 0;text-align:center"><button class="linkbtn" type="button" data-act="fb">Send feedback</button> &nbsp;·&nbsp; <a href="https://vojnovicspasoje.github.io/gotgotneed/privacy.html" target="_blank" rel="noopener" style="color:var(--muted)">Privacy policy</a></p>';
   return h;
 }
 
@@ -964,6 +978,8 @@ document.addEventListener('click', e => {
     case 'open': if (suppressOpen) { suppressOpen = false; break; } S.colId = id; S.edId = null; S.varId = null; S.q = ''; S.filter = 'all'; S.tab = 'album'; go('col'); break;
     case 'new': S.newMode = 'range'; go('new'); break;
     case 'skins': go('settings'); break;
+    case 'fb': S.fbSent = false; go('feedback'); break;
+    case 'fbtype': S.fbType = id; b.parentElement.querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', String(x === b))); break;
     case 'hcat': S.homeCat = id; render(); break;
     case 'hclear': S.homeQ = ''; S.homeCat = 'all'; render(); break;
     case 'skin': applySkin(id); saveSkin(); render(); toast(SKINS[S.skin].name + ' theme on'); break;
@@ -1058,6 +1074,19 @@ document.addEventListener('change', e => {
 document.addEventListener('submit', e => {
   const f = e.target.dataset.form; if (!f) return;
   e.preventDefault();
+  if (f === 'feedback') {
+    const err = m => { const el = $('#fbErr'); el.textContent = m; el.hidden = false; };
+    const msg = $('#fbMsg').value.trim(), email = $('#fbEmail').value.trim();
+    if (!msg) { err('Write a message first.'); $('#fbMsg').focus(); return; }
+    if (window.claude) { err('Sending isn’t available inside Claude. Open the app at vojnovicspasoje.github.io/gotgotneed to send feedback.'); return; }
+    const btn = $('#fbSend'); btn.disabled = true; btn.textContent = 'Sending…';
+    const body = new URLSearchParams({ 'entry.960602004': S.fbType, 'entry.1848165584': msg });
+    if (email) body.append('entry.774501519', email);
+    fetch(FB_URL, { method: 'POST', mode: 'no-cors', body })
+      .then(() => { S.fbSent = true; render(); scrollTo(0, 0); })
+      .catch(() => { btn.disabled = false; btn.textContent = 'Send'; err('Could not send. Check your internet connection and try again.'); });
+    return;
+  }
   const col = curCol();
   if (f === 'new') {
     const name = $('#nName').value.trim(); if (!name) return;
@@ -1111,7 +1140,7 @@ document.addEventListener('submit', e => {
 });
 
 /* ---------- navigation history (phone back button / gesture) ---------- */
-const DEPTH = { home: 0, col: 1, new: 1, edit: 2, settings: 1 };
+const DEPTH = { home: 0, col: 1, new: 1, edit: 2, settings: 1, feedback: 1 };
 const stateOf = v => ({ kol: 1, v, colId: S.colId, d: DEPTH[v] });
 function show(v) { S.view = v; render(); scrollTo(0, 0); }
 function go(v) { try { history.pushState(stateOf(v), ''); } catch (e) {} show(v); }
