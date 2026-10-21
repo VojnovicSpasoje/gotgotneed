@@ -46,7 +46,7 @@ const comp = await ctx.newPage();
 await comp.setViewportSize({ width: 360, height: 640 });
 for (const [name, [l1, l2, bg, fg]] of Object.entries(CAP)) {
   const img = fs.readFileSync(`${OUT}/raw-${name}.png`).toString('base64');
-  await comp.setContent(`<!doctype html><html><head>
+  await comp.setContent(`<!doctype html><html><head><meta name="viewport" content="width=360,initial-scale=1">
   <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,800&display=swap" rel="stylesheet">
   <style>html,body{margin:0;width:360px;height:640px;overflow:hidden;background:${bg}}
   .cap{position:absolute;top:34px;left:0;right:0;text-align:center;font:800 27px/1.15 "Bricolage Grotesque",sans-serif;color:${fg};letter-spacing:-.01em}
