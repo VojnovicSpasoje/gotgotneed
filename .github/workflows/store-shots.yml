@@ -21,4 +21,4 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add store
           git commit -m "Update Play Store screenshots" || echo "no changes"
-          git push
+          git pull --rebase origin main && git push
