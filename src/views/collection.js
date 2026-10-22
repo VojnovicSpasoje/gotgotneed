@@ -30,8 +30,8 @@ export function viewCol() {
   if (S.tab === 'trade') return h + tradeHTML(col, ed);
   const flt = [['all', 'All'], ['have', 'Have'], ['miss', 'Missing'], ['dup', 'Duplicates']];
   h += '<div class="tools">' + (showSearch(ed, vid) ? '<input class="search" id="q" type="search" placeholder="' + (ed.mode === 'range' ? 'Find a number…' : 'Search name or serial number…') + '" value="' + esc(S.q) + '">' : '') +
-    '<div class="rowwrap" style="justify-content:space-between"><div class="seg" role="group" aria-label="Filter">' + flt.map(([k, l]) => '<button type="button" data-act="filter" data-id="' + k + '" aria-pressed="' + (S.filter === k) + '">' + l + '</button>').join('') + '</div>' +
-    '<div class="seg" role="group" aria-label="Tap action">' + [['toggle', 'Mark'], ['plus', '+1'], ['minus', '−1']].map(([k, l]) => '<button type="button" data-act="mode" data-id="' + k + '" aria-pressed="' + (S.mode === k) + '">' + l + '</button>').join('') + '</div>' +
+    '<div class="rowwrap" style="justify-content:space-between"><div class="seg" role="group" aria-label="Filter">' + flt.map(([k, l]) => '<button type="button" data-act="filter" data-id="' + k + '" aria-pressed="' + (S.filter === k) + '">' + l + '</button>').join('') + '</div></div>' +
+    '<div class="actrow"><div class="seg" role="group" aria-label="Tap action">' + [['toggle', 'Mark'], ['plus', '+1'], ['minus', '−1']].map(([k, l]) => '<button type="button" data-act="mode" data-id="' + k + '" aria-pressed="' + (S.mode === k) + '">' + l + '</button>').join('') + '</div>' +
     '<div class="addrow"><button class="btn small" type="button" data-act="bulk">+ Add many</button>' + layoutBtn(ed) + '</div></div>' +
     '<div class="hint">' + (S.mode === 'toggle' ? 'Tap to mark or unmark an item.' : S.mode === 'plus' ? 'Tap to add another copy (duplicate).' : 'Tap to remove one copy.') + '</div></div>';
   h += '<div id="items">' + itemsHTML(col, ed, vid) + '</div>';
@@ -41,7 +41,7 @@ export function viewCol() {
 function layoutBtn(ed) {
   if (ed.mode !== 'list') return '';
   const to = (ed.view || 'grid') === 'grid' ? 'list' : 'grid';
-  return '<button class="viewbtn" type="button" data-act="lview" data-id="' + to + '" aria-label="Show as ' + to + '">' + ICON[to] + (to === 'grid' ? 'Grid' : 'List') + '</button>';
+  return '<button class="viewbtn" type="button" data-act="lview" data-id="' + to + '" aria-label="Show as ' + to + '" title="Show as ' + to + '">' + ICON[to] + '</button>';
 }
 export function heroHTML(col, ed, vid, cs, es) {
   const vname = col.variants.length > 1 ? col.variants.find(v => v.id === vid).name : '', ep = pct(es.owned, es.total);

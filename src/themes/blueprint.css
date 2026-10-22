@@ -44,4 +44,4 @@
 :root[data-skin="blueprint"] .modal-card{border-radius:0;border:1.5px solid var(--line);background:#123A6B}
 :root[data-skin="blueprint"] .modal-card h3{text-transform:uppercase;letter-spacing:.08em;font-size:16px}
 :root[data-skin="blueprint"] .key{border-radius:0;background:transparent}
-:root[data-skin="blueprint"] .viewbtn{border-radius:0;background:transparent;font-family:var(--f-mono);text-transform:uppercase;letter-spacing:.06em;font-size:12px}
+:root[data-skin="blueprint"] .viewbtn{border-radius:0;background:transparent}
