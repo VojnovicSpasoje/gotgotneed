@@ -450,8 +450,10 @@ details.pick summary span{font-weight:400;color:var(--muted)}
 :root[data-skin="neon"] .modal-card{border-color:#FF3EA5;box-shadow:0 0 18px rgba(255,62,165,.35)}
 :root[data-skin="neon"] .modal-card h3{font-weight:400;color:#FF6CBE}
 .modal-card.sheet{max-width:440px;max-height:calc(100% - 16px);overflow-y:auto;gap:12px}
+.modal-card.sheet>*{flex-shrink:0}
 .modal-card.sheet h3{font-size:20px}
-.bkdisp{min-height:52px;border:1px solid var(--line);border-radius:12px;padding:10px 14px;font-family:var(--f-mono);font-size:22px;background:var(--bg);word-break:break-word;line-height:1.35}
+.bkdisp{height:54px;border:1px solid var(--line);border-radius:12px;padding:0 14px;font-family:var(--f-mono);font-size:22px;background:var(--bg);line-height:52px;white-space:nowrap;overflow-x:auto;overflow-y:hidden;scrollbar-width:none}
+.bkdisp::-webkit-scrollbar{display:none}
 .bkdisp .caret{display:inline-block;width:2px;height:1.05em;background:var(--accent);vertical-align:-.15em;margin-left:1px;animation:k-blink 1s steps(1) infinite}
 @keyframes k-blink{50%{opacity:0}}
 .pad{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
@@ -465,10 +467,11 @@ details.pick summary span{font-weight:400;color:var(--muted)}
 .bchip{display:inline-flex;align-items:center;gap:5px;padding:4px 9px;border-radius:999px;font-size:13px;font-weight:600;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);font-family:var(--f-mono)}
 .bchip small{font-weight:500;opacity:.85}
 .bchip span{opacity:.5}
-.bchip.new{border-color:var(--have);background:color-mix(in srgb,var(--have) 14%,var(--surface))}
-.bchip.dup{border-color:var(--dup);background:var(--dup-soft);color:var(--ink)}
-.bchip.range{border-color:var(--accent);border-style:dashed}
-.bchip.bad{border-color:var(--danger);color:var(--danger);text-decoration:line-through}
+.bchip.new{border-color:#1F9D6B;background:rgba(31,157,107,.16);color:var(--ink)}
+.bchip.dup{border-color:#E08A00;background:rgba(224,138,0,.18);color:var(--ink)}
+.bchip.range{border-color:#1F9D6B;border-style:dashed;background:transparent;color:var(--ink)}
+.bchip.bad{border-color:#D63A2F;background:transparent;color:#D63A2F;text-decoration:line-through}
+.bksum b.n{color:#1F9D6B}.bksum b.d{color:#E08A00}.bksum b.x{color:#D63A2F}
 :root[data-skin="album"] .key,:root[data-skin="album"] .bkdisp,:root[data-skin="album"] .bktext{border-radius:3px}
 :root[data-skin="pixel"] .key{border:2px solid var(--ink);font-family:var(--f-body);font-size:26px}
 :root[data-skin="blueprint"] .key{border-radius:0;background:transparent}
@@ -730,27 +733,41 @@ function openBulk() {
 }
 function bkTokens(ed) { return ed.mode === 'range' ? BK.text.split(/[\s,;]+/).filter(Boolean) : BK.text.split(/[\n,;]+/).map(x => x.trim()).filter(Boolean); }
 function bkParse() {
-  const col = curCol(), ed = curEd(col), vid = BK.vid, sim = {}, out = [];
+  const col = curCol(), ed = curEd(col), vid = BK.vid, sim = {}, out = [], groups = {};
   const get = k => (k in sim ? sim[k] : cnt(ed, k, vid));
-  const hit = k => { const c = get(k); sim[k] = c + 1; return c === 0 ? 'new' : 'dup'; };
   let nNew = 0, nDup = 0, nBad = 0; const adds = [];
-  for (const tok of bkTokens(ed)) {
+  const single = (ti, k, label) => {
+    const c = get(k); sim[k] = c + 1; c === 0 ? nNew++ : nDup++; adds.push(k);
+    let g = groups[k];
+    if (!g) { g = groups[k] = { k, label, had: c, add: 0, idx: [] }; out.push(g); }
+    g.add++; g.idx.push(ti);
+  };
+  bkTokens(ed).forEach((tok, ti) => {
     if (ed.mode === 'range') {
-      const m = tok.replace(/[–—]/g, '-').match(/^(\d+)(?:-(\d+))?$/);
-      if (!m) { out.push({ tok, cls: 'bad', label: tok }); nBad++; continue; }
-      let a = +m[1], b = m[2] !== undefined && m[2] !== '' ? +m[2] : a; if (b < a) [a, b] = [b, a];
-      if (m[2] !== undefined && b - a > 2000) { out.push({ tok, cls: 'bad', label: tok }); nBad++; continue; }
+      const m = tok.replace(/[–—]/g, '-').match(/^(\d+)(?:-(\d*))?$/);
+      if (!m) { out.push({ cls: 'bad', label: tok, idx: [ti] }); nBad++; return; }
+      if (m[2] === undefined || m[2] === '') {
+        const n = +m[1], k = String(n);
+        if (m[2] === '' ) { out.push({ cls: 'range', label: n + '–…', idx: [ti], sub: 'type the end' }); return; }
+        if (n < ed.from || n > ed.to || !inScope(ed, vid, k)) { out.push({ cls: 'bad', label: k, idx: [ti] }); nBad++; return; }
+        return single(ti, k, k);
+      }
+      let a = +m[1], b = +m[2]; if (b < a) [a, b] = [b, a];
+      if (b - a > 2000) { out.push({ cls: 'bad', label: tok, idx: [ti] }); nBad++; return; }
       let cn = 0, cd = 0, cb = 0;
-      for (let n = a; n <= b; n++) { const k = String(n); if (n < ed.from || n > ed.to || !inScope(ed, vid, k)) { cb++; continue; } const r = hit(k); r === 'new' ? cn++ : cd++; adds.push(k); }
+      for (let n = a; n <= b; n++) { const k = String(n); if (n < ed.from || n > ed.to || !inScope(ed, vid, k)) { cb++; continue; } const c = get(k); sim[k] = c + 1; c === 0 ? cn++ : cd++; adds.push(k); }
       nNew += cn; nDup += cd; nBad += cb;
-      const cls = a === b ? (cb ? 'bad' : cn ? 'new' : 'dup') : (cn + cd === 0 ? 'bad' : 'range');
-      out.push({ tok, cls, label: a === b ? String(a) : a + '–' + b, sub: a === b ? (cls === 'dup' ? '×' + get(String(a)) : '') : [cn && cn + ' new', cd && cd + ' dup', cb && cb + ' ✕'].filter(Boolean).join(' · ') });
+      out.push({ cls: cn + cd === 0 ? 'bad' : 'range', label: a + '–' + b, idx: [ti], sub: [cn && cn + ' new', cd && cd + ' dup', cb && cb + ' ✕'].filter(Boolean).join(' · ') });
     } else {
       const w = normName(tok), it = ed.items.find(i => normName(i.name) === w || (i.sn && normName(i.sn) === w));
-      if (!it || !inScope(ed, vid, it.k)) { out.push({ tok, cls: 'bad', label: tok }); nBad++; continue; }
-      const r = hit(it.k); r === 'new' ? nNew++ : nDup++; adds.push(it.k);
-      out.push({ tok, cls: r, label: it.name, sub: r === 'dup' ? '×' + get(it.k) : '' });
+      if (!it || !inScope(ed, vid, it.k)) { out.push({ cls: 'bad', label: tok, idx: [ti] }); nBad++; return; }
+      single(ti, it.k, it.name);
     }
+  });
+  for (const g of out) if (g.k !== undefined) {
+    const fin = g.had + g.add;
+    g.cls = g.had === 0 ? 'new' : 'dup';
+    g.sub = (g.add > 1 ? '+' + g.add : '') + (fin > 1 ? (g.add > 1 ? ' → ' : '') + '×' + fin : '');
   }
   return { out, nNew, nDup, nBad, adds };
 }
@@ -781,8 +798,8 @@ function renderBulk() {
 }
 function bkUpdate() {
   const ed = curEd(curCol()), r = bkParse();
-  const d = $('#bkDisp'); if (d) d.innerHTML = esc(BK.text) + '<span class="caret"></span>';
-  $('#bkPrev').innerHTML = (r.out.length ? '<div class="bksum">' + [r.nNew + ' new', r.nDup + ' duplicate' + (r.nDup === 1 ? '' : 's'), r.nBad ? r.nBad + ' not in this album' : ''].filter(Boolean).join(' · ') + '</div>' : '<div class="bksum muted">Nothing entered yet</div>') +
+  const d = $('#bkDisp'); if (d) { d.innerHTML = (BK.text ? esc(BK.text) : '<span class="muted">12 45 101-117</span>') + '<span class="caret"></span>'; d.scrollLeft = d.scrollWidth; }
+  $('#bkPrev').innerHTML = (r.out.length ? '<div class="bksum">' + ['<b class="n">' + r.nNew + ' new</b>', '<b class="d">' + r.nDup + ' duplicate' + (r.nDup === 1 ? '' : 's') + '</b>', r.nBad ? '<b class="x">' + r.nBad + ' not in this album</b>' : ''].filter(Boolean).join(' · ') + '</div>' : '<div class="bksum muted">Nothing entered yet</div>') +
     '<div class="bkchips">' + r.out.map((c, i) => '<button type="button" class="bchip ' + c.cls + '" data-act="bkchip" data-id="' + i + '" aria-label="Remove ' + esc(c.label) + '">' + esc(c.label) + (c.sub ? ' <small>' + esc(c.sub) + '</small>' : '') + ' <span aria-hidden="true">×</span></button>').join('') + '</div>';
   const n = r.adds.length, b = $('#bkAdd'); b.textContent = n ? 'Add ' + n : 'Add'; b.disabled = !n;
   const sg = $('#bkSug'); if (sg) sg.innerHTML = bkSuggest(ed).map(i => '<button type="button" class="chip" data-act="bksug" data-id="' + i.k + '">' + esc(i.name) + '</button>').join('');
@@ -1165,7 +1182,7 @@ document.addEventListener('click', e => {
       bkUpdate(); break; }
     case 'bkkb': BK.kb = id; try { localStorage.setItem('ggn.bulkKb', id); } catch (err) {} renderBulk(); if (id === 'phone') { const t = $('#bkText'); t.focus(); t.setSelectionRange(t.value.length, t.value.length); } break;
     case 'bkvar': BK.vid = id; b.parentElement.querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', String(x === b))); bkUpdate(); break;
-    case 'bkchip': { const ed = curEd(col), toks = bkTokens(ed); toks.splice(+id, 1); BK.text = ed.mode === 'range' ? (toks.join(' ') + (toks.length ? ' ' : '')) : (toks.join(', ') + (toks.length ? ', ' : '')); const t = $('#bkText'); if (t) t.value = BK.text; bkUpdate(); break; }
+    case 'bkchip': { const ed = curEd(col), drop = new Set(bkParse().out[+id].idx), toks = bkTokens(ed).filter((x, i) => !drop.has(i)); BK.text = ed.mode === 'range' ? (toks.join(' ') + (toks.length ? ' ' : '')) : (toks.join(', ') + (toks.length ? ', ' : '')); const t = $('#bkText'); if (t) t.value = BK.text; bkUpdate(); break; }
     case 'bksug': { const ed = curEd(col), it = ed.items.find(i => i.k === id); const parts = BK.text.split(/([\n,;])/); parts[parts.length - 1] = (BK.text.match(/[\n,;]\s*$/) ? '' : ' ') + it.name; BK.text = parts.join('').replace(/^\s+/, '') + ', '; const t = $('#bkText'); t.value = BK.text; t.focus(); bkUpdate(); break; }
     case 'bkclear': BK.text = ''; { const t = $('#bkText'); if (t) t.value = ''; } bkUpdate(); break;
     case 'bkadd': bkApply(); break;
