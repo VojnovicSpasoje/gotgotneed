@@ -36,10 +36,11 @@ async function idbGet(key) { const db = await idb(); return new Promise((ok, no)
 async function idbSet(key, val) { const db = await idb(); return new Promise((ok, no) => { const t = db.transaction(STORE, 'readwrite'); t.objectStore(STORE).put(val, key); t.oncomplete = () => ok(); t.onerror = () => no(t.error); }); }
 
 let copyTimer;
-onSave(cols => {
+onSave((cols, saved) => {
   clearTimeout(copyTimer);
   const snap = JSON.parse(JSON.stringify(cols));
-  copyTimer = setTimeout(() => idbSet('cols', { cols: snap, saved: Date.now() }).catch(() => {}), 400);
+  // Same time stamp as the main copy, so on the next start the two are recognised as equal.
+  copyTimer = setTimeout(() => idbSet('cols', { cols: snap, saved }).catch(() => {}), 400);
   askPersist();
 });
 

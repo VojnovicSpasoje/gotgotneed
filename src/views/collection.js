@@ -108,7 +108,8 @@ export function tradeHTML(col, ed) {
   const miss = tradeText(col, ed, 'miss'), dup = tradeText(col, ed, 'dup');
   const block = (id, title, txt, emptyMsg) => '<div class="box trade"><h3>' + title + (txt ? '<button class="btn small" type="button" data-act="copy" data-id="' + id + '">Copy</button>' : '') + '</h3>' +
     (txt ? '<textarea id="' + id + '" readonly>' + esc(txt) + '</textarea>' : '<p class="muted" style="margin:0">' + emptyMsg + '</p>') + '</div>';
-  return '<div class="stack"><p class="hint" style="margin:0">List for the edition “' + esc(ed.name) + '”. Copy it and send it to your trading group.</p>' +
+  return '<div class="stack"><div class="box swapcta"><div><b>Swap with a friend</b><span class="hint">Show a QR code – your friend sees right away what you can swap.</span></div><button class="btn" type="button" data-act="share">' + ICON.qr + 'Share</button></div>' +
+    '<p class="hint" style="margin:0">List for the edition “' + esc(ed.name) + '”. Copy it and send it to your trading group.</p>' +
     block('tMiss', 'Missing', miss, 'Nothing missing in this edition. Well done!') +
     block('tDup', 'Duplicates to trade', dup, 'No duplicates in this edition.') + '</div>';
 }

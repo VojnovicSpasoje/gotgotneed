@@ -24,10 +24,12 @@ src/
     select.js         what is on screen right now (current collection / edition / variant)
     store.js          saving (this device; Claude account sync when run inside Claude)
     backup.js         export / import .json
+    share.js          pack an edition into a swap link, compare with a friend's (tested)
     examples.js       example collections for first-time users
   ui/                 toast (messages + Undo), modal (confirmation window)
   views/              one file per screen: home, collection, new, edit, feedback (+ drag to reorder)
-  features/           bigger add-ons: bulk.js (“Add many”), safety.js (persistent storage, IndexedDB safety copy, backup reminder)
+  features/           bigger add-ons: bulk.js (“Add many”), safety.js (safety copy, backup reminder), trade.js (swap with a friend: QR/link + compare)
+  lib/qr.js           QR code generator (no outside service)
   themes/             themes.js (colors, fonts, picker) + one CSS file per theme
   styles/             reset, design tokens, shared components, feature styles
   pwa/                offline support and the “Install” bar (website only)

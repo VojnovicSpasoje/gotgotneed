@@ -10,9 +10,9 @@ const saveHooks = [];
 export const onSave = fn => saveHooks.push(fn);
 export function loadLocal() { try { const r = localStorage.getItem(LS); if (r) { const d = JSON.parse(r); if (d && Array.isArray(d.cols)) return d.cols; } } catch (e) {} return []; }
 export function saveLocal() {
-  const cols = S.cols.filter(c => !c.example);
-  try { localStorage.setItem(LS, JSON.stringify({ cols, saved: Date.now() })); } catch (e) {}
-  for (const f of saveHooks) { try { f(cols); } catch (e) {} }
+  const cols = S.cols.filter(c => !c.example), saved = Date.now();
+  try { localStorage.setItem(LS, JSON.stringify({ cols, saved })); } catch (e) {}
+  for (const f of saveHooks) { try { f(cols, saved); } catch (e) {} }
 }
 export function syncHTML() {
   const txt = S.sync === 'cloud' ? 'Saved to your account' : S.sync === 'error' ? 'Could not save' : 'This device only';

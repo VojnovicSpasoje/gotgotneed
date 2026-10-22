@@ -11,6 +11,7 @@ import './views/new.js';
 import './views/edit.js';
 import './views/feedback.js';
 import './features/bulk.js';
+import './features/trade.js';
 import './data/backup.js';
 import { restoreFromCopy } from './features/safety.js';
 // TEMPORARY – testing helper, remove before release:
