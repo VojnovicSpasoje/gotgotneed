@@ -41,3 +41,4 @@
 :root[data-skin="neon"] .modal-card{border-color:#FF3EA5;box-shadow:0 0 18px rgba(255,62,165,.35)}
 :root[data-skin="neon"] .modal-card h3{font-weight:400;color:#FF6CBE}
 :root[data-skin="neon"] .key{background:#12121C;border-color:#2A2A40}
+:root[data-skin="neon"] .viewbtn{background:#12121C}

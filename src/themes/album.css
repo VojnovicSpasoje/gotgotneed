@@ -75,3 +75,4 @@
 :root[data-skin="album"] .modal-card{border-radius:2px;border:0;box-shadow:0 2px 3px rgba(80,60,20,.2),0 18px 40px rgba(60,40,10,.3)}
 :root[data-skin="album"] .modal-card h3{font-family:var(--f-display);font-size:28px}
 :root[data-skin="album"] .key,:root[data-skin="album"] .bkdisp,:root[data-skin="album"] .bktext{border-radius:3px}
+:root[data-skin="album"] .viewbtn{border-radius:4px}
