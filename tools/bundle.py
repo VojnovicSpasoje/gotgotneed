@@ -25,6 +25,14 @@ for p in order:
     code = IMPORT.sub('', open(p).read())
     code = re.sub(r'^export\s+', '', code, flags=re.M)
     js.append(f'/* ---- {os.path.relpath(p, SRC)} ---- */\n' + code.strip())
+# All modules share one scope in the bundle, so two top-level names that are equal would clash.
+TOP = re.compile(r'^(?:export\s+)?(?:async\s+)?(?:const|let|var|function\*?|class)\s+([A-Za-z_$][\w$]*)', re.M)
+owner = {}
+for p in order:
+    for name in TOP.findall(open(p).read()):
+        if name in owner and owner[name] != p:
+            raise SystemExit(f'Name clash: "{name}" is defined in {os.path.relpath(owner[name], SRC)} and {os.path.relpath(p, SRC)} – rename one.')
+        owner[name] = p
 script = '(() => {\n' + '\n\n'.join(js) + '\n})();'
 
 index = open(os.path.join(ROOT, 'index.html')).read()

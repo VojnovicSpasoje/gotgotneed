@@ -7,9 +7,9 @@ import { touch } from './store.js';
 import { toast } from '../ui/toast.js';
 
 // Remembered so the app can remind people who have never (or long ago) made a backup.
-export const BK = 'ggn.backup';
-export function backupInfo() { try { return JSON.parse(localStorage.getItem(BK) || '{}') || {}; } catch (e) { return {}; } }
-export function setBackupInfo(patch) { try { localStorage.setItem(BK, JSON.stringify({ ...backupInfo(), ...patch })); } catch (e) {} }
+export const BACKUP_KEY = 'ggn.backup';
+export function backupInfo() { try { return JSON.parse(localStorage.getItem(BACKUP_KEY) || '{}') || {}; } catch (e) { return {}; } }
+export function setBackupInfo(patch) { try { localStorage.setItem(BACKUP_KEY, JSON.stringify({ ...backupInfo(), ...patch })); } catch (e) {} }
 export const markBackedUp = () => { setBackupInfo({ last: Date.now() }); document.getElementById('bknudge')?.remove(); };
 
 export function backupJSON() { return JSON.stringify({ app: 'kolekcionar', version: 1, exported: new Date().toISOString(), cols: S.cols.filter(c => !c.example) }, null, 1); }
