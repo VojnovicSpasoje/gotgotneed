@@ -32,7 +32,7 @@ export function viewCol() {
   h += '<div class="tools">' + (showSearch(ed, vid) ? '<input class="search" id="q" type="search" placeholder="' + (ed.mode === 'range' ? 'Find a number…' : 'Search name or serial number…') + '" value="' + esc(S.q) + '">' : '') +
     '<div class="rowwrap" style="justify-content:space-between"><div class="seg" role="group" aria-label="Filter">' + flt.map(([k, l]) => '<button type="button" data-act="filter" data-id="' + k + '" aria-pressed="' + (S.filter === k) + '">' + l + '</button>').join('') + '</div></div>' +
     '<div class="actrow"><div class="seg" role="group" aria-label="Tap action">' + [['toggle', 'Mark'], ['plus', '+1'], ['minus', '−1']].map(([k, l]) => '<button type="button" data-act="mode" data-id="' + k + '" aria-pressed="' + (S.mode === k) + '">' + l + '</button>').join('') + '</div>' +
-    '<div class="addrow"><button class="btn small" type="button" data-act="bulk">+ Add many</button>' + layoutBtn(ed) + '</div></div>' +
+    '<div class="actend"><button class="btn small" type="button" data-act="bulk">+ Add many</button>' + layoutBtn(ed) + '</div></div>' +
     '<div class="hint">' + (S.mode === 'toggle' ? 'Tap to mark or unmark an item.' : S.mode === 'plus' ? 'Tap to add another copy (duplicate).' : 'Tap to remove one copy.') + '</div></div>';
   h += '<div id="items">' + itemsHTML(col, ed, vid) + '</div>';
   return h;
