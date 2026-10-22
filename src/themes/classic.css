@@ -1,0 +1,19 @@
+/* Theme: classic – its own look, marking style and animations. */
+.sk-prev[data-p="classic"]{background:#ECEFF4;color:#141D2E;border-color:#CED6E2}
+.sk-prev[data-p="classic"] .sk-title{font-family:"Bricolage Grotesque",system-ui,sans-serif;font-weight:800}
+.sk-prev[data-p="classic"] i{border:1.5px dashed #CED6E2;color:#5A6579}
+.sk-prev[data-p="classic"] i.on{background:#13785A;border:1.5px solid #13785A;color:#fff}
+.sk-prev[data-p="classic"] b{background:#B97A00}
+.sk-prev[data-p="classic"] .sk-bar{background:#E2E7EF}
+.sk-prev[data-p="classic"] .sk-bar span{background:#13785A}
+:root[data-skin="classic"] .btn:not(.ghost):not(.danger){background:var(--ink);color:var(--bg)}
+:root[data-skin="classic"] .slot.on{box-shadow:0 2px 0 rgba(0,0,0,.14)}
+:root[data-skin="classic"] .slot.on::after{content:"";position:absolute;right:0;bottom:0;width:13px;height:13px;background:linear-gradient(135deg,transparent 50%,rgba(255,255,255,.6) 50%);border-top-left-radius:5px;border-bottom-right-radius:6px}
+@media (prefers-reduced-motion: no-preference){
+  :root[data-skin="classic"] .slot.just,:root[data-skin="classic"] .item.just .check{animation:k-stick .34s ease-out}
+  @keyframes k-stick{0%{transform:scale(.55) rotate(-10deg);opacity:.3}70%{transform:scale(1.08) rotate(2deg);opacity:1}100%{transform:none}}
+}
+@media (prefers-reduced-motion: no-preference){
+  :root[data-skin="classic"] .slot.drop::before{content:"";position:absolute;inset:-1.5px;border-radius:7px;background:var(--have);pointer-events:none;animation:k-peel .42s ease-in forwards}
+  @keyframes k-peel{0%{opacity:1;transform:none}100%{opacity:0;transform:translate(12px,-16px) rotate(16deg) scale(.85)}}
+}

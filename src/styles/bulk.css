@@ -1,0 +1,26 @@
+/* Add many: number pad, preview chips. */
+.modal-card.sheet{max-width:440px;max-height:calc(100% - 16px);overflow-y:auto;gap:12px}
+.modal-card.sheet>*{flex-shrink:0}
+.modal-card.sheet h3{font-size:20px}
+.bkdisp{height:54px;border:1px solid var(--line);border-radius:12px;padding:0 14px;font-family:var(--f-mono);font-size:22px;background:var(--bg);line-height:52px;white-space:nowrap;overflow-x:auto;overflow-y:hidden;scrollbar-width:none}
+.bkdisp::-webkit-scrollbar{display:none}
+.bkdisp .caret{display:inline-block;width:2px;height:1.05em;background:var(--accent);vertical-align:-.15em;margin-left:1px;animation:k-blink 1s steps(1) infinite}
+@keyframes k-blink{50%{opacity:0}}
+.pad{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.key{height:52px;border-radius:12px;border:1px solid var(--line);background:var(--surface);color:var(--ink);font-family:var(--f-mono);font-size:22px;font-weight:600;touch-action:manipulation;-webkit-user-select:none;user-select:none}
+.key:active{background:var(--sunk)}
+.key.next{grid-column:1/-1;font-family:var(--f-body);font-size:16px}
+.bktext{width:100%;border:1px solid var(--line);background:var(--bg);border-radius:12px;padding:10px 12px;font-family:var(--f-mono);font-size:17px;resize:vertical}
+.bkprev{display:flex;flex-direction:column;gap:8px}
+.bksum{font-size:13px;font-weight:600}
+.bkchips{display:flex;flex-wrap:wrap;gap:6px;max-height:160px;overflow-y:auto}
+.bchip{display:inline-flex;align-items:center;gap:5px;padding:4px 9px;border-radius:999px;font-size:13px;font-weight:600;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);font-family:var(--f-mono)}
+.bchip small{font-weight:500;opacity:.85}
+.bchip span{opacity:.5}
+.bchip.new{border-color:#1F9D6B;background:rgba(31,157,107,.16);color:var(--ink)}
+.bchip.dup{border-color:#E08A00;background:rgba(224,138,0,.18);color:var(--ink)}
+.bchip.range{border-color:#1F9D6B;border-style:dashed;background:transparent;color:var(--ink)}
+.bchip.bad{border-color:#D63A2F;background:transparent;color:#D63A2F;text-decoration:line-through}
+.bksum b.n{color:#1F9D6B}
+.bksum b.d{color:#E08A00}
+.bksum b.x{color:#D63A2F}

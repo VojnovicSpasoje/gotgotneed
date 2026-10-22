@@ -1,0 +1,46 @@
+/* Theme: blueprint – its own look, marking style and animations. */
+:root[data-skin="blueprint"] .sortsel{border-radius:0;background:transparent}
+:root[data-skin="blueprint"] .hero-stats > div{border-radius:0;border:2px solid var(--line);background:transparent}
+.sk-prev[data-p="blueprint"]{background-color:#123A6B;background-image:linear-gradient(rgba(255,255,255,.09) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.09) 1px,transparent 1px);background-size:10px 10px;color:#EAF2FF;border-color:#5C86BE;border-radius:0}
+.sk-prev[data-p="blueprint"] .sk-title{font-family:"IBM Plex Mono",monospace;font-size:16px;font-weight:600}
+.sk-prev[data-p="blueprint"] i{border:1px dashed #5C86BE;border-radius:0;color:#9DB8DE;font-family:"IBM Plex Mono",monospace}
+.sk-prev[data-p="blueprint"] i.on{border:1.5px solid #fff;color:#fff;background:repeating-linear-gradient(45deg,rgba(255,255,255,.25) 0 2px,transparent 2px 5px)}
+.sk-prev[data-p="blueprint"] b{background:#FFD166}
+.sk-prev[data-p="blueprint"] .sk-bar{border:1px solid #5C86BE;border-radius:0;background:transparent}
+.sk-prev[data-p="blueprint"] .sk-bar span{background:repeating-linear-gradient(45deg,#fff 0 2px,transparent 2px 4px)}
+:root[data-skin="blueprint"] .btn:not(.ghost):not(.danger){background:transparent;color:#fff;border:1.5px solid #fff;box-shadow:inset 0 0 0 3px rgba(255,255,255,.08)}
+:root[data-skin="blueprint"] .slot.on::after{content:"✓";position:absolute;right:3px;bottom:3px;width:15px;height:15px;border:1.5px solid #fff;border-radius:50%;display:grid;place-items:center;font-size:9px;line-height:1;font-family:var(--f-body);background:#123A6B}
+:root[data-skin="blueprint"] .check.on{background:repeating-linear-gradient(45deg,rgba(255,255,255,.3) 0 2px,transparent 2px 5px)}
+@media (prefers-reduced-motion: no-preference){
+  :root[data-skin="blueprint"] .slot.just::after,:root[data-skin="blueprint"] .item.just .check{animation:k-stamp .35s ease-out}
+  @keyframes k-stamp{0%{transform:scale(1.8);opacity:0}60%{transform:scale(.9);opacity:1}100%{transform:none}}
+}
+@media (prefers-reduced-motion: no-preference){
+  :root[data-skin="blueprint"] .slot.drop::before{content:"";position:absolute;inset:-1px;border:2px solid #fff;background:repeating-linear-gradient(45deg,rgba(255,255,255,.2) 0 2px,transparent 2px 6px);pointer-events:none;animation:k-fade .4s ease-out forwards}
+  :root[data-skin="blueprint"] .slot.drop::after{content:"✓";position:absolute;right:3px;bottom:3px;width:15px;height:15px;border:1.5px solid #fff;border-radius:50%;display:grid;place-items:center;font-size:9px;line-height:1;background:#123A6B;color:#fff;animation:k-unstamp .4s ease-in forwards}
+  @keyframes k-unstamp{to{opacity:0;transform:scale(1.8) rotate(25deg)}}
+}
+:root[data-skin="blueprint"] body{background-image:linear-gradient(rgba(255,255,255,.08) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.08) 1px,transparent 1px),linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px);background-size:80px 80px,80px 80px,16px 16px,16px 16px}
+:root[data-skin="blueprint"] .brand,:root[data-skin="blueprint"] .top h1,:root[data-skin="blueprint"] .card h2,:root[data-skin="blueprint"] .section>h2,:root[data-skin="blueprint"] .box h3{text-transform:uppercase;letter-spacing:.08em;font-weight:600}
+:root[data-skin="blueprint"] .brand{font-size:20px}
+:root[data-skin="blueprint"] .top h1{font-size:17px}
+:root[data-skin="blueprint"] .card h2{font-family:var(--f-display);font-size:15px}
+:root[data-skin="blueprint"] .card .pct,:root[data-skin="blueprint"] .summary b,:root[data-skin="blueprint"] .ring .v{font-weight:600}
+:root[data-skin="blueprint"] .card,:root[data-skin="blueprint"] .box,:root[data-skin="blueprint"] .list{border-radius:0;border:1.5px solid var(--line);background:rgba(18,58,107,.75);box-shadow:none}
+:root[data-skin="blueprint"] .card{position:relative}
+:root[data-skin="blueprint"] .card::after{content:"";position:absolute;inset:-5px;border:1px dashed rgba(255,255,255,.18);pointer-events:none}
+:root[data-skin="blueprint"] .btn,:root[data-skin="blueprint"] .chip,:root[data-skin="blueprint"] .seg,:root[data-skin="blueprint"] .seg button,:root[data-skin="blueprint"] .search,:root[data-skin="blueprint"] .iconbtn,:root[data-skin="blueprint"] .check,:root[data-skin="blueprint"] .field input,:root[data-skin="blueprint"] .field textarea,:root[data-skin="blueprint"] .slot{border-radius:0}
+:root[data-skin="blueprint"] .btn{text-transform:uppercase;letter-spacing:.08em;font-family:var(--f-mono);font-size:13px}
+:root[data-skin="blueprint"] .chip,:root[data-skin="blueprint"] .search,:root[data-skin="blueprint"] .iconbtn{background:transparent}
+:root[data-skin="blueprint"] .chip[aria-pressed="true"]{background:var(--ink);color:var(--accent-ink);border-color:var(--ink)}
+:root[data-skin="blueprint"] .bar{height:7px;border-radius:0;background:transparent;border:1px solid var(--line)}
+:root[data-skin="blueprint"] .bar span{background:repeating-linear-gradient(45deg,#fff 0 2px,transparent 2px 5px)}
+:root[data-skin="blueprint"] .slot{border:1px dashed var(--line);color:var(--muted)}
+:root[data-skin="blueprint"] .slot.on{border:2px solid #fff;color:#fff;background:repeating-linear-gradient(45deg,rgba(255,255,255,.2) 0 2px,transparent 2px 6px);text-shadow:0 0 4px #123A6B,0 0 2px #123A6B}
+:root[data-skin="blueprint"] .slot .x{background:var(--dup);color:#123A6B;font-family:var(--f-mono);font-weight:700;font-size:12px;padding:1px 5px;border-radius:0;top:-8px;right:-7px;z-index:2;box-shadow:0 0 0 2px #123A6B}
+:root[data-skin="blueprint"] .dupc{background:var(--dup);color:#123A6B;font-weight:700;padding:1px 6px}
+:root[data-skin="blueprint"] .check.on{background:transparent;border:2px solid #fff;color:#fff}
+:root[data-skin="blueprint"] .meta,:root[data-skin="blueprint"] .label,:root[data-skin="blueprint"] .tabs button{font-family:var(--f-mono);text-transform:uppercase;letter-spacing:.06em;font-size:11px}
+:root[data-skin="blueprint"] .modal-card{border-radius:0;border:1.5px solid var(--line);background:#123A6B}
+:root[data-skin="blueprint"] .modal-card h3{text-transform:uppercase;letter-spacing:.08em;font-size:16px}
+:root[data-skin="blueprint"] .key{border-radius:0;background:transparent}

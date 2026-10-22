@@ -1,0 +1,15 @@
+/* Design tokens: colors and fonts for the default (Classic) look, light and dark. Themes override these. */
+:root{
+  --bg:#ECEFF4; --surface:#FFFFFF; --sunk:#E2E7EF; --ink:#141D2E; --muted:#5A6579; --line:#CED6E2;
+  --accent:#2445C4; --accent-ink:#FFFFFF; --have:#13785A; --have-ink:#FFFFFF; --dup:#B97A00; --dup-soft:#FBEFD2; --danger:#B3261E;
+  --f-display:"Bricolage Grotesque", "Avenir Next", system-ui, sans-serif;
+  --f-body:"Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-mono:"IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0E131B; --surface:#161D28; --sunk:#1D2633; --ink:#E4E9F1; --muted:#95A2B6; --line:#2B3647;
+  --accent:#8199FF; --accent-ink:#0E131B; --have:#2DB088; --have-ink:#06231A; --dup:#E9B43C; --dup-soft:#3A2F14; --danger:#FF8A80; color-scheme:dark;}}
+:root[data-theme="dark"]{
+  --bg:#0E131B; --surface:#161D28; --sunk:#1D2633; --ink:#E4E9F1; --muted:#95A2B6; --line:#2B3647;
+  --accent:#8199FF; --accent-ink:#0E131B; --have:#2DB088; --have-ink:#06231A; --dup:#E9B43C; --dup-soft:#3A2F14; --danger:#FF8A80; color-scheme:dark;}

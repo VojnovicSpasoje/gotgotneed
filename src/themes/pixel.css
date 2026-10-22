@@ -1,0 +1,57 @@
+/* Theme: pixel – its own look, marking style and animations. */
+:root[data-skin="pixel"] .brand .logo{width:28px;height:28px;vertical-align:-8px}
+:root[data-skin="pixel"] .sortsel{border:2px solid var(--ink);font-size:18px}
+:root[data-skin="pixel"] .hero-big{font-size:18px;font-weight:400}
+:root[data-skin="pixel"] .hero-big span{font-size:11px}
+:root[data-skin="pixel"] .hero-stats b{font-size:20px}
+:root[data-skin="pixel"] .hero-stats > div{border-radius:0;border:2px solid var(--line);background:transparent}
+:root[data-skin="pixel"] .seg button{padding:5px 8px}
+.sk-prev[data-p="pixel"]{background:#9BBC0F repeating-linear-gradient(0deg,rgba(15,56,15,.08) 0 1px,transparent 1px 3px);color:#0F380F;border:3px solid #0F380F;border-radius:0}
+.sk-prev[data-p="pixel"] .sk-title{font-family:"Press Start 2P",monospace;font-size:11px;font-weight:400}
+.sk-prev[data-p="pixel"] i{border:2px solid #306230;border-radius:0;color:#306230;font-family:"VT323",monospace;font-size:14px;font-weight:400}
+.sk-prev[data-p="pixel"] .sk-slots{gap:3px}
+.sk-prev[data-p="pixel"] i{min-width:0;overflow:hidden}
+.sk-prev[data-p="pixel"] i.on{background:#0F380F;border-color:#0F380F;color:#9BBC0F}
+.sk-prev[data-p="pixel"] b{background:#9BBC0F;border:2px solid #0F380F;border-radius:0}
+.sk-prev[data-p="pixel"] .sk-bar{height:9px;border:2px solid #0F380F;border-radius:0;background:#9BBC0F}
+.sk-prev[data-p="pixel"] .sk-bar span{background:repeating-linear-gradient(90deg,#0F380F 0 5px,transparent 5px 7px)}
+:root[data-skin="pixel"] #items .slot.ntile{font-family:var(--f-body);font-size:19px;font-weight:400}
+:root[data-skin="pixel"] .slot.on::after{content:"";position:absolute;left:4px;top:4px;width:5px;height:5px;background:var(--bg);box-shadow:5px 0 0 var(--bg),0 5px 0 var(--bg)}
+@media (prefers-reduced-motion: no-preference){
+  :root[data-skin="pixel"] .slot.just,:root[data-skin="pixel"] .item.just .check{animation:k-bump .3s steps(3)}
+  @keyframes k-bump{0%{transform:translateY(0)}40%{transform:translateY(-8px)}100%{transform:translateY(0)}}
+  :root[data-skin="pixel"] .slot.just::before,:root[data-skin="pixel"] .item.just .nm::after{content:"+1";position:absolute;left:50%;top:-6px;z-index:3;font-family:var(--f-display);font-size:12px;line-height:1;color:var(--ink);background:#E8F7A0;padding:5px 6px;border:3px solid var(--ink);box-shadow:3px 3px 0 var(--ink);pointer-events:none;animation:k-float .7s steps(7) forwards}
+  :root[data-skin="pixel"] .item.just .nm{position:relative}
+  @keyframes k-float{from{transform:translate(-50%,0);opacity:1}to{transform:translate(-50%,-26px);opacity:0}}
+}
+@media (prefers-reduced-motion: no-preference){
+  :root[data-skin="pixel"] .slot.drop::before{content:"";position:absolute;inset:-2px;background:var(--ink);pointer-events:none;animation:k-break .3s steps(3) forwards}
+  @keyframes k-break{to{transform:scale(0)}}
+  :root[data-skin="pixel"] .slot.less::before,:root[data-skin="pixel"] .slot.drop::after,:root[data-skin="pixel"] .item.less .nm::after,:root[data-skin="pixel"] .item.drop .nm::after{content:"−1";position:absolute;left:50%;top:-6px;z-index:3;font-family:var(--f-display);font-size:12px;line-height:1;color:var(--ink);background:#E8F7A0;padding:5px 6px;border:3px solid var(--ink);box-shadow:3px 3px 0 var(--ink);pointer-events:none;animation:k-float .7s steps(7) forwards}
+  :root[data-skin="pixel"] .item.less .nm,:root[data-skin="pixel"] .item.drop .nm{position:relative}
+}
+:root[data-skin="pixel"] *{border-radius:0!important}
+:root[data-skin="pixel"] body{font-size:20px;line-height:1.15;background-image:repeating-linear-gradient(0deg,rgba(15,56,15,.07) 0 1px,transparent 1px 3px)}
+:root[data-skin="pixel"] .brand{font-size:15px;font-weight:400;line-height:1.4}
+:root[data-skin="pixel"] .top h1{font-size:12px;font-weight:400;line-height:1.5}
+:root[data-skin="pixel"] .card h2,:root[data-skin="pixel"] .section>h2,:root[data-skin="pixel"] .box h3{font-size:12px;font-weight:400;line-height:1.6}
+:root[data-skin="pixel"] .card .pct,:root[data-skin="pixel"] .ring .v{font-size:13px;font-weight:400}
+:root[data-skin="pixel"] .summary b{font-size:22px;font-weight:400}
+:root[data-skin="pixel"] .meta,:root[data-skin="pixel"] .chip,:root[data-skin="pixel"] .seg button,:root[data-skin="pixel"] .btn.small,:root[data-skin="pixel"] .sync,:root[data-skin="pixel"] .tag,:root[data-skin="pixel"] .tabs button{font-size:18px}
+:root[data-skin="pixel"] .label{font-size:15px;letter-spacing:.04em}
+:root[data-skin="pixel"] .hint{font-size:17px}
+:root[data-skin="pixel"] .card,:root[data-skin="pixel"] .box,:root[data-skin="pixel"] .list{border:3px solid var(--ink);box-shadow:4px 4px 0 var(--muted);background:var(--surface)}
+:root[data-skin="pixel"] .btn,:root[data-skin="pixel"] .chip,:root[data-skin="pixel"] .iconbtn,:root[data-skin="pixel"] .search,:root[data-skin="pixel"] .seg{border:2px solid var(--ink)}
+:root[data-skin="pixel"] .btn:not(.ghost){box-shadow:3px 3px 0 var(--muted)}
+:root[data-skin="pixel"] .btn:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--muted)}
+:root[data-skin="pixel"] .chip[aria-pressed="true"],:root[data-skin="pixel"] .seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg);box-shadow:none}
+:root[data-skin="pixel"] .bar{height:14px;border:2px solid var(--ink);background:var(--bg)}
+:root[data-skin="pixel"] .bar span{background:repeating-linear-gradient(90deg,var(--ink) 0 8px,transparent 8px 10px)}
+:root[data-skin="pixel"] .slot{border:2px solid var(--muted);background:var(--surface);color:var(--muted);font-size:24px;font-weight:400}
+:root[data-skin="pixel"] .slot.on{border:2px solid var(--ink);background:var(--ink);color:var(--bg);box-shadow:inset -3px -3px 0 #306230}
+:root[data-skin="pixel"] .slot .x{background:var(--bg);color:var(--ink);border:2px solid var(--ink);font-size:15px;padding:0 3px;line-height:1}
+:root[data-skin="pixel"] .check{border:2px solid var(--ink)}
+:root[data-skin="pixel"] .check.on{background:var(--ink);color:var(--bg)}
+:root[data-skin="pixel"] .modal-card{border:3px solid var(--ink);box-shadow:6px 6px 0 var(--muted)}
+:root[data-skin="pixel"] .modal-card h3{font-size:13px;line-height:1.6;font-weight:400}
+:root[data-skin="pixel"] .key{border:2px solid var(--ink);font-family:var(--f-body);font-size:26px}
