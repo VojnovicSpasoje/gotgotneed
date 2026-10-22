@@ -30,7 +30,7 @@ export function viewCol() {
   if (S.tab === 'trade') return h + tradeHTML(col, ed);
   const flt = [['all', 'All'], ['have', 'Have'], ['miss', 'Missing'], ['dup', 'Duplicates']];
   const lets = letterBar(ed, vid);
-  h += '<div class="tools">' + (lets ? lettersHTML(lets) : '<input class="search" id="q" type="search" placeholder="' + (ed.mode === 'range' ? 'Find a number…' : 'Search name or serial number…') + '" value="' + esc(S.q) + '">') +
+  h += '<div class="tools"><input class="search" id="q" type="search" placeholder="' + (ed.mode === 'range' ? 'Find a number…' : 'Search name or serial number…') + '" value="' + esc(S.q) + '">' + (lets ? lettersHTML(lets) : '') +
     '<div class="rowwrap" style="justify-content:space-between"><div class="seg" role="group" aria-label="Filter">' + flt.map(([k, l]) => '<button type="button" data-act="filter" data-id="' + k + '" aria-pressed="' + (S.filter === k) + '">' + l + '</button>').join('') + '</div>' +
     '<div class="seg" role="group" aria-label="Tap action">' + [['toggle', 'Mark'], ['plus', '+1'], ['minus', '−1']].map(([k, l]) => '<button type="button" data-act="mode" data-id="' + k + '" aria-pressed="' + (S.mode === k) + '">' + l + '</button>').join('') + '</div>' +
     '<button class="btn small" type="button" data-act="bulk">+ Add many</button>' +
@@ -49,9 +49,10 @@ export function heroHTML(col, ed, vid, cs, es) {
     '<div><span class="label">Dupes</span><b class="num" style="color:var(--dup)">' + es.dups + '</b></div>' +
     (bn ? '<div><span class="label">★ Bonus</span><b class="num">' + bn.owned + '/' + bn.total + '</b></div>' : '') + '</div>';
 }
-// Long name lists get a letter strip instead of the search box. Only letters that actually
+// Long name lists (over LETTER_MIN) also get a letter strip under the search box.
+// Typing and picking a letter are alternatives: one clears the other. Only letters that actually
 // start an item are shown; tapping one filters (the list keeps its album order).
-export const LETTER_MIN = 25;
+export const LETTER_MIN = 30;
 // Accents fold into the base letter (Á→A, É→E), except letters that are their own in BCS (Č Ć Š Ž Đ).
 const OWN = 'ČĆŠŽĐ';
 const firstLetter = name => {
@@ -72,7 +73,7 @@ function lettersHTML(lets) {
 }
 export function visibleItems(ed, vid) {
   const bar = letterBar(ed, vid);
-  const q = bar ? '' : S.q.trim().toLowerCase(), letter = bar && bar.includes(S.letter) ? S.letter : '';
+  const q = S.q.trim().toLowerCase(), letter = bar && bar.includes(S.letter) ? S.letter : '';
   return itemsOf(ed).filter(it => {
     if (!inScope(ed, vid, it.k)) return false;
     const c = cnt(ed, it.k, vid);
@@ -144,6 +145,7 @@ onAct({
   var: ({ id }) => { S.varId = id; S.letter = ''; render(); },
   letter: ({ id, col }) => {
     S.letter = S.letter === id ? '' : id;
+    if (S.letter && S.q) { S.q = ''; $('#q').value = ''; }
     document.querySelectorAll('#letters button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.id === S.letter)));
     $('#items').innerHTML = itemsHTML(col, curEd(col), curVar(col));
   },
@@ -160,4 +162,5 @@ onAct({
     try { navigator.clipboard.writeText(t).then(() => toast('Copied'), fallback); } catch (err) { fallback(); }
   },
 });
-onInput(e => { if (e.target.id === 'q') { S.q = e.target.value; const col = curCol(); $('#items').innerHTML = itemsHTML(col, curEd(col), curVar(col)); return true; } });
+onInput(e => { if (e.target.id === 'q') { S.q = e.target.value;
+  if (S.q && S.letter) { S.letter = ''; document.querySelectorAll('#letters button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.id === ''))); } const col = curCol(); $('#items').innerHTML = itemsHTML(col, curEd(col), curVar(col)); return true; } });
