@@ -125,6 +125,6 @@ onSubmit({
     const c = { id: uid(), name, cat: $('#nCat').value.trim(), created: Date.now(), updated: Date.now(), order: S.cols.filter(x => !x.example).length,
       variants, editions: [r.ed] };
     S.cols = S.cols.filter(x => !x.example); S.cols.push(c); touch(c);
-    S.colId = c.id; S.edId = null; S.varId = null; S.q = ''; S.letter = ''; S.filter = 'all'; S.tab = 'album'; swap('col');
+    S.colId = c.id; S.edId = null; S.varId = null; S.q = ''; S.filter = 'all'; S.tab = 'album'; swap('col');
   },
 });

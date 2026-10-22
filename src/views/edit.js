@@ -114,7 +114,7 @@ onSubmit({
     const name = $('#aName').value.trim(); if (!name) return;
     const r = readEdition('a', S.addMode, name);
     if (r.err) { const el = $('#aErr'); el.textContent = r.err; el.hidden = false; return; }
-    col.editions.push(r.ed); touch(col); S.edId = r.ed.id; S.tab = 'album'; S.q = ''; S.letter = ''; S.filter = 'all'; navBack('col');
+    col.editions.push(r.ed); touch(col); S.edId = r.ed.id; S.tab = 'album'; S.q = ''; S.filter = 'all'; navBack('col');
     toast('Edition added');
   },
 });

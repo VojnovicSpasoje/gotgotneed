@@ -29,8 +29,7 @@ export function viewCol() {
   h += '<div class="tabs"><button type="button" data-act="tab" data-id="album" aria-pressed="' + (S.tab === 'album') + '">Album</button><button type="button" data-act="tab" data-id="trade" aria-pressed="' + (S.tab === 'trade') + '">Trade</button></div>';
   if (S.tab === 'trade') return h + tradeHTML(col, ed);
   const flt = [['all', 'All'], ['have', 'Have'], ['miss', 'Missing'], ['dup', 'Duplicates']];
-  const lets = letterBar(ed, vid);
-  h += '<div class="tools"><input class="search" id="q" type="search" placeholder="' + (ed.mode === 'range' ? 'Find a number…' : 'Search name or serial number…') + '" value="' + esc(S.q) + '">' + (lets ? lettersHTML(lets) : '') +
+  h += '<div class="tools">' + (showSearch(ed, vid) ? '<input class="search" id="q" type="search" placeholder="' + (ed.mode === 'range' ? 'Find a number…' : 'Search name or serial number…') + '" value="' + esc(S.q) + '">' : '') +
     '<div class="rowwrap" style="justify-content:space-between"><div class="seg" role="group" aria-label="Filter">' + flt.map(([k, l]) => '<button type="button" data-act="filter" data-id="' + k + '" aria-pressed="' + (S.filter === k) + '">' + l + '</button>').join('') + '</div>' +
     '<div class="seg" role="group" aria-label="Tap action">' + [['toggle', 'Mark'], ['plus', '+1'], ['minus', '−1']].map(([k, l]) => '<button type="button" data-act="mode" data-id="' + k + '" aria-pressed="' + (S.mode === k) + '">' + l + '</button>').join('') + '</div>' +
     '<button class="btn small" type="button" data-act="bulk">+ Add many</button>' +
@@ -49,38 +48,17 @@ export function heroHTML(col, ed, vid, cs, es) {
     '<div><span class="label">Dupes</span><b class="num" style="color:var(--dup)">' + es.dups + '</b></div>' +
     (bn ? '<div><span class="label">★ Bonus</span><b class="num">' + bn.owned + '/' + bn.total + '</b></div>' : '') + '</div>';
 }
-// Long name lists (over LETTER_MIN) also get a letter strip under the search box.
-// Typing and picking a letter are alternatives: one clears the other. Only letters that actually
-// start an item are shown; tapping one filters (the list keeps its album order).
-export const LETTER_MIN = 30;
-// Accents fold into the base letter (Á→A, É→E), except letters that are their own in BCS (Č Ć Š Ž Đ).
-const OWN = 'ČĆŠŽĐ';
-const firstLetter = name => {
-  let ch = (name.trim()[0] || '').toLocaleUpperCase();
-  if (!OWN.includes(ch)) ch = ch.normalize('NFD')[0] || ch;
-  return /\p{L}/u.test(ch) ? ch : '#';
-};
-export function letterBar(ed, vid) {
-  if (ed.mode !== 'list') return null;
-  const items = itemsOf(ed).filter(it => inScope(ed, vid, it.k));
-  if (items.length <= LETTER_MIN) return null;
-  const set = new Set(items.map(it => firstLetter(it.name)));
-  return [...set].sort((a, b) => a === '#' ? 1 : b === '#' ? -1 : a.localeCompare(b));
-}
-function lettersHTML(lets) {
-  const btn = (id, label) => '<button type="button" data-act="letter" data-id="' + esc(id) + '" aria-pressed="' + (S.letter === id) + '">' + esc(label) + '</button>';
-  return '<div class="letters" id="letters" role="group" aria-label="First letter">' + btn('', 'All') + lets.map(l => btn(l, l)).join('') + '</div>';
-}
+// The search box only appears on longer editions; short ones are quicker to scan by eye.
+export const SEARCH_MIN = 40;
+export const showSearch = (ed, vid) => itemsOf(ed).filter(it => inScope(ed, vid, it.k)).length >= SEARCH_MIN;
 export function visibleItems(ed, vid) {
-  const bar = letterBar(ed, vid);
-  const q = S.q.trim().toLowerCase(), letter = bar && bar.includes(S.letter) ? S.letter : '';
+  const q = showSearch(ed, vid) ? S.q.trim().toLowerCase() : '';
   return itemsOf(ed).filter(it => {
     if (!inScope(ed, vid, it.k)) return false;
     const c = cnt(ed, it.k, vid);
     if (S.filter === 'have' && c < 1) return false;
     if (S.filter === 'miss' && c > 0) return false;
     if (S.filter === 'dup' && c < 2) return false;
-    if (letter && firstLetter(it.name) !== letter) return false;
     if (q && !(it.name.toLowerCase().includes(q) || (it.sn || '').toLowerCase().includes(q))) return false;
     return true;
   });
@@ -141,14 +119,8 @@ export function applyTap(col, ed, k, how) {
 
 registerView('col', viewCol, 1);
 onAct({
-  ed: ({ id }) => { S.edId = id; S.q = ''; S.letter = ''; render(); },
-  var: ({ id }) => { S.varId = id; S.letter = ''; render(); },
-  letter: ({ id, col }) => {
-    S.letter = S.letter === id ? '' : id;
-    if (S.letter && S.q) { S.q = ''; $('#q').value = ''; }
-    document.querySelectorAll('#letters button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.id === S.letter)));
-    $('#items').innerHTML = itemsHTML(col, curEd(col), curVar(col));
-  },
+  ed: ({ id }) => { S.edId = id; S.q = ''; render(); },
+  var: ({ id }) => { S.varId = id; render(); },
   tab: ({ id }) => { S.tab = id; render(); },
   filter: ({ id }) => { S.filter = id; render(); },
   mode: ({ id }) => { S.mode = id; render(); },
@@ -162,5 +134,4 @@ onAct({
     try { navigator.clipboard.writeText(t).then(() => toast('Copied'), fallback); } catch (err) { fallback(); }
   },
 });
-onInput(e => { if (e.target.id === 'q') { S.q = e.target.value;
-  if (S.q && S.letter) { S.letter = ''; document.querySelectorAll('#letters button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.id === ''))); } const col = curCol(); $('#items').innerHTML = itemsHTML(col, curEd(col), curVar(col)); return true; } });
+onInput(e => { if (e.target.id === 'q') { S.q = e.target.value; const col = curCol(); $('#items').innerHTML = itemsHTML(col, curEd(col), curVar(col)); return true; } });
