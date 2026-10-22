@@ -16,3 +16,4 @@
 .setswitch input:checked+i::after{transform:translateX(18px);background:var(--have-ink,#fff)}
 .setswitch input:focus-visible+i{outline:2px solid var(--accent);outline-offset:2px}
 .btn[disabled]{opacity:.45;pointer-events:none}
+.hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}

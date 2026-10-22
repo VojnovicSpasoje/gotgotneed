@@ -14,8 +14,10 @@ export function editionForm(prefix, mode) {
 export function readEdition(prefix, mode, name) {
   const ed = { id: uid(), name: name || 'Main edition', mode, from: 1, to: 1, items: [], have: {} };
   if (mode === 'range') {
-    const f = parseInt($('#' + prefix + 'from').value, 10), t = parseInt($('#' + prefix + 'to').value, 10);
-    if (!Number.isFinite(f) || !Number.isFinite(t) || t < f) return { err: '“To” must be greater than or equal to “From”.' };
+    const fs = $('#' + prefix + 'from').value.trim(), ts = $('#' + prefix + 'to').value.trim();
+    if (!/^\d{1,7}$/.test(fs) || !/^\d{1,7}$/.test(ts)) return { err: 'Use whole numbers from 0 up, e.g. From 1, To 670.' };
+    const f = +fs, t = +ts;
+    if (t < f) return { err: '“To” must be greater than or equal to “From”.' };
     if (t - f + 1 > MAX_ITEMS) return { err: 'At most ' + MAX_ITEMS + ' numbers per edition.' };
     ed.from = f; ed.to = t;
   } else { ed.items = parseLines($('#' + prefix + 'items').value); const d = dupNames(ed.items); if (d.length) return { err: dupMsg(d) }; }
@@ -37,7 +39,7 @@ export function pickSum(box) {
   box.querySelector('summary span').textContent = box.dataset.all !== '0' ? 'All items' : n + ' selected';
 }
 export function newVarRow() {
-  return '<div class="vbox" data-vrow><div class="vrow"><input data-f="name" placeholder="Variant name, e.g. Shiny" autocomplete="off" aria-label="Variant name"><button class="linkbtn" type="button" data-act="nvdel" style="color:var(--danger)">Remove</button></div>' +
+  return '<div class="vbox" data-vrow><div class="vrow"><input data-f="name" maxlength="40" placeholder="Variant name, e.g. Shiny" autocomplete="off" aria-label="Variant name"><button class="linkbtn" type="button" data-act="nvdel" style="color:var(--danger)">Remove</button></div>' +
     '<input class="vscope" data-f="scope" placeholder="' + scopePh() + '" autocomplete="off" inputmode="text" aria-label="Which numbers have this variant"' + (S.newMode === 'range' ? '' : ' hidden') + '>' +
     '<details class="pick" data-f="pick" data-all="1"' + (S.newMode === 'list' ? '' : ' hidden') + '><summary>Which items have it: <span>All items</span></summary><div class="picklist"></div></details>' +
     '<label class="chk"><input type="checkbox" data-f="bonus"> Bonus: don’t count toward 100%</label></div>';
@@ -45,13 +47,13 @@ export function newVarRow() {
 export function viewNew() {
   return '<header class="top"><button class="iconbtn" type="button" data-act="home" aria-label="Back">' + ICON.back + '</button><h1>New collection</h1></header>' +
     '<form class="box" data-form="new" style="margin-top:6px">' +
-    '<label class="field"><span class="label">Collection name</span><input id="nName" required placeholder="e.g. World Cup 2026" autocomplete="off"></label>' +
-    '<label class="field"><span class="label">Category (optional)</span><input id="nCat" placeholder="Stickers, coins, cards…" autocomplete="off"></label>' +
-    '<label class="field"><span class="label">First edition name</span><input id="nEd" value="Main edition" autocomplete="off"></label>' +
+    '<label class="field"><span class="label">Collection name</span><input id="nName" maxlength="100" required placeholder="e.g. World Cup 2026" autocomplete="off"></label>' +
+    '<label class="field"><span class="label">Category (optional)</span><input id="nCat" maxlength="40" placeholder="Stickers, coins, cards…" autocomplete="off"></label>' +
+    '<label class="field"><span class="label">First edition name</span><input id="nEd" maxlength="60" value="Main edition" autocomplete="off"></label>' +
     editionForm('n', S.newMode) +
     '<label class="chk big"><input type="checkbox" id="nHasVar"> This collection has special variants <span class="hint">e.g. Shiny, Gold, Signed</span></label>' +
     '<div id="nVarBox" class="stack" hidden>' +
-      '<label class="field"><span class="label">Base version name</span><input id="nBase" value="Regular" autocomplete="off"><span class="hint">Every item has the base version.</span></label>' +
+      '<label class="field"><span class="label">Base version name</span><input id="nBase" maxlength="40" value="Regular" autocomplete="off"><span class="hint">Every item has the base version.</span></label>' +
       '<div class="stack" id="nVarRows">' + newVarRow() + '</div>' +
       '<button class="btn small ghost" type="button" data-act="nvadd" style="align-self:flex-start">+ Add another variant</button>' +
       '<span class="hint">For each special variant, choose which items exist in it. If every item has it, leave it on all.</span>' +

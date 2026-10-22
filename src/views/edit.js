@@ -3,7 +3,7 @@ import { onAct, onChange, onSubmit } from '../core/events.js';
 import { go, navBack, registerView, render } from '../core/nav.js';
 import { MAX_ITEMS, S } from '../core/state.js';
 import { $, ICON, clone, esc, uid } from '../core/util.js';
-import { dupMsg, dupNames, inScope, itemsOf, linesOf, parseLines, purgeEd, scopeFrom, scopeText } from '../data/model.js';
+import { dupMsg, dupNames, inScope, itemsOf, linesOf, parseLines, purgeEd, scopeFrom, scopeText , LIMITS } from '../data/model.js';
 import { curCol } from '../data/select.js';
 import { push, removeCol, saveLocal, touch } from '../data/store.js';
 import { toast } from '../ui/toast.js';
@@ -23,24 +23,24 @@ export function viewEdit() {
   const col = curCol(); if (!col) { S.view = 'home'; return viewHome(); }
   const cf = S.confirm;
   let h = '<header class="top"><button class="iconbtn" type="button" data-act="back" aria-label="Back">' + ICON.back + '</button><h1>Edit</h1></header>';
-  h += '<div class="box"><label class="field"><span class="label">Name</span><input id="eName" data-edit="name" value="' + esc(col.name) + '"></label>' +
-    '<label class="field"><span class="label">Category</span><input id="eCat" data-edit="cat" value="' + esc(col.cat || '') + '"></label></div>';
+  h += '<div class="box"><label class="field"><span class="label">Name</span><input id="eName" maxlength="100" data-edit="name" value="' + esc(col.name) + '"></label>' +
+    '<label class="field"><span class="label">Category</span><input id="eCat" maxlength="40" data-edit="cat" value="' + esc(col.cat || '') + '"></label></div>';
   h += '<section class="section"><h2>Variants</h2><div class="box">' + col.variants.map((v, i) =>
-    '<div class="stack" style="gap:8px"><div class="vrow"><input id="v_' + v.id + '" data-edit="var" data-id="' + v.id + '" value="' + esc(v.name) + '" aria-label="Variant name">' +
+    '<div class="stack" style="gap:8px"><div class="vrow"><input id="v_' + v.id + '" maxlength="40" data-edit="var" data-id="' + v.id + '" value="' + esc(v.name) + '" aria-label="Variant name">' +
     (col.variants.length > 1 ? (cf === 'v:' + v.id ? '<button class="btn small danger" type="button" data-act="delvar" data-id="' + v.id + '">Delete</button><button class="btn small ghost" type="button" data-act="cancel">No</button>' : '<button class="btn small ghost" type="button" data-act="ask" data-id="v:' + v.id + '">Remove</button>') : '') + '</div>' +
     (i > 0 ? '<label class="chk"><input type="checkbox" id="vb_' + v.id + '" data-edit="vbonus" data-id="' + v.id + '"' + (v.bonus ? ' checked' : '') + '> Bonus: don’t count toward 100%</label>' : (col.variants.length > 1 ? '<span class="hint">Base version: every item has it.</span>' : '')) + '</div>').join('') +
-    '<form class="addrow" data-form="addvar" style="margin-top:0"><input id="newVar" placeholder="New variant, e.g. Shiny" autocomplete="off"><button class="btn small" type="submit">Add</button></form>' +
+    '<form class="addrow" data-form="addvar" style="margin-top:0"><input id="newVar" maxlength="40" placeholder="New variant, e.g. Shiny" autocomplete="off"><button class="btn small" type="submit">Add</button></form>' +
     '<span class="hint">Deleting a variant also deletes everything marked in it. Choose which items have each special variant under Editions below.</span></div></section>';
   h += '<section class="section"><h2>Editions</h2>' + col.editions.map(e =>
     '<div class="box"><div class="rowwrap" style="justify-content:space-between"><span class="label">' + (e.mode === 'range' ? 'By number' : 'By name') + '</span>' +
     (col.editions.length > 1 ? (cf === 'e:' + e.id ? '<span class="rowwrap"><button class="btn small danger" type="button" data-act="deled" data-id="' + e.id + '">Delete edition</button><button class="btn small ghost" type="button" data-act="cancel">No</button></span>' : '<button class="linkbtn" type="button" data-act="ask" data-id="e:' + e.id + '" style="color:var(--danger)">Delete</button>') : '') + '</div>' +
-    '<label class="field"><span class="label">Edition name</span><input id="en_' + e.id + '" data-edit="edname" data-id="' + e.id + '" value="' + esc(e.name) + '"></label>' +
+    '<label class="field"><span class="label">Edition name</span><input id="en_' + e.id + '" maxlength="60" data-edit="edname" data-id="' + e.id + '" value="' + esc(e.name) + '"></label>' +
     (e.mode === 'range'
       ? '<div class="two"><label class="field"><span class="label">From</span><input id="ef_' + e.id + '" type="number" inputmode="numeric" data-edit="from" data-id="' + e.id + '" value="' + e.from + '"></label><label class="field"><span class="label">To</span><input id="et_' + e.id + '" type="number" inputmode="numeric" data-edit="to" data-id="' + e.id + '" value="' + e.to + '"></label></div>'
       : '<label class="field"><span class="label">Items (' + e.items.length + ')</span><textarea id="ei_' + e.id + '" data-edit="items" data-id="' + e.id + '">' + esc(linesOf(e)) + '</textarea><span class="hint">One per line, “name ; serial number”. Saved when you leave the field.</span></label>') +
     (col.variants.length > 1 ? '<div class="field"><span class="label">Which items have each variant</span>' + (e.mode === 'range' ? '<span class="hint">Numbers separated by spaces, e.g. 1-20 45. Empty means all.</span>' : '') + col.variants.slice(1).map(v => scopeEditor(e, v)).join('') + '</div>' : '') +
     '</div>').join('') +
-    '<form class="box" data-form="added"><h3>Add edition</h3><label class="field"><span class="label">Name</span><input id="aName" placeholder="e.g. 2027 edition, Update, Series B" autocomplete="off" required></label>' +
+    '<form class="box" data-form="added"><h3>Add edition</h3><label class="field"><span class="label">Name</span><input id="aName" maxlength="60" placeholder="e.g. 2027 edition, Update, Series B" autocomplete="off" required></label>' +
     editionForm('a', S.addMode) + '<p id="aErr" class="hint" style="color:var(--danger);margin:0" hidden></p><button class="btn" type="submit">Add edition</button></form></section>';
   h += '<section class="section"><h2>Collection</h2>' + (cf === 'col'
     ? '<div class="confirm"><span>Delete “' + esc(col.name) + '” and all its data?</span><button class="btn small danger" type="button" data-act="delcol">Delete</button><button class="btn small ghost" type="button" data-act="cancel">Cancel</button></div>'
@@ -84,13 +84,13 @@ onChange(e => {
     ed.vscope = ed.vscope || {}; if (on.length === all) delete ed.vscope[v]; else ed.vscope[v] = on;
     box.querySelector('summary span').textContent = on.length + ' of ' + all + ' items'; touch(col); return true; }
   const val = t.value.trim();
-  if (kind === 'name') { if (!val) { t.value = col.name; return true; } col.name = val; }
-  else if (kind === 'cat') col.cat = val;
-  else if (kind === 'var') { const v = col.variants.find(x => x.id === t.dataset.id); if (!val) { t.value = v.name; return true; } v.name = val; }
-  else if (kind === 'edname') { if (!val) { t.value = ed.name; return true; } ed.name = val; }
+  if (kind === 'name') { if (!val) { t.value = col.name; return true; } col.name = val.slice(0, LIMITS.colName); }
+  else if (kind === 'cat') col.cat = val.slice(0, LIMITS.cat);
+  else if (kind === 'var') { const v = col.variants.find(x => x.id === t.dataset.id); if (!val) { t.value = v.name; return true; } v.name = val.slice(0, LIMITS.varName); }
+  else if (kind === 'edname') { if (!val) { t.value = ed.name; return true; } ed.name = val.slice(0, LIMITS.edName); }
   const snapEd = ed && (kind === 'from' || kind === 'to' || kind === 'items') ? clone(ed) : null;
   if (kind === 'from' || kind === 'to') {
-    const n = parseInt(val, 10); const f = kind === 'from' ? n : ed.from, to = kind === 'to' ? n : ed.to;
+    const n = /^\d{1,7}$/.test(val) ? +val : NaN; const f = kind === 'from' ? n : ed.from, to = kind === 'to' ? n : ed.to;
     if (!Number.isFinite(n) || to < f || to - f + 1 > MAX_ITEMS) { t.value = ed[kind]; toast('Invalid number range'); return true; }
     ed[kind] = n;
   } else if (kind === 'items') {

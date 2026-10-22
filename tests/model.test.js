@@ -58,3 +58,20 @@ test('removing items also removes their marks (nothing kept in the background)',
   assert.deepEqual(Object.keys(ed.have), ['k0|v1']);
   assert.deepEqual(ed.vscope.g, ['k0']);
 });
+
+test('cleanCol: data from files/links cannot carry HTML in ids, keys or numbers', async () => {
+  const { cleanCol } = await import('../src/data/model.js');
+  const bad = '"><img src=x onerror=alert(1)>';
+  const c = cleanCol({ id: bad, name: 'N', variants: [{ id: 'v' + bad, name: 'R' }], editions: [
+    { id: bad, name: 'E', mode: 'range', from: '1' + bad, to: 5, have: { ['3|v' + bad]: 2, ['9|v' + bad]: 1, 'x|y': 5 }, view: bad },
+    { id: 'ok', name: 'L', mode: 'list', items: [{ k: 'k' + bad, name: 'A' }, { k: 'good', name: 'B', sn: 7 }], have: { ['k' + bad + '|v' + bad]: '3' } }] });
+  const json = JSON.stringify(c);
+  assert.ok(!json.includes('<img'), json);
+  assert.match(c.id, /^[\w-]+$/);
+  const [r, l] = c.editions, v = c.variants[0].id;
+  assert.equal(r.from, 1); assert.equal(r.to, 5); assert.equal(r.view, 'grid');
+  assert.deepEqual(r.have, { ['3|' + v]: 2 });                 // 9 is outside 1–5, x|y unknown variant
+  assert.equal(l.items[1].sn, '7');
+  assert.equal(l.have[l.items[0].k + '|' + v], 3);             // keys remapped together with the item
+  assert.equal(cleanCol({ name: 'no editions' }), null);
+});

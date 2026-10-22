@@ -7,6 +7,7 @@ import { onRender, render } from '../core/nav.js';
 import { G, LS, S } from '../core/state.js';
 import { backupInfo, doExport, setBackupInfo } from '../data/backup.js';
 import { onSave, saveLocal } from '../data/store.js';
+import { cleanCol } from '../data/model.js';
 import { toast } from '../ui/toast.js';
 
 const DAY = 864e5;
@@ -56,7 +57,7 @@ export async function restoreFromCopy() {
     if (main !== null && main >= (d.saved || 0)) return false;
     if (!d.cols.length) return false;
     const had = own().length;
-    S.cols = d.cols; saveLocal(); render();
+    S.cols = d.cols.map(cleanCol).filter(Boolean); saveLocal(); render();
     toast(had ? 'Restored newer changes from the safety copy' : 'Your collections were restored from the safety copy');
     return true;
   } catch (e) { return false; }

@@ -3,12 +3,13 @@ import { render } from '../core/nav.js';
 import { G, LS, S, chains, pending, timers } from '../core/state.js';
 import { $ } from '../core/util.js';
 import { curCol } from './select.js';
+import { cleanCol } from './model.js';
 import { SKINS, SKIN_ALIAS, applySkin } from '../themes/themes.js';
 
 // Other modules (e.g. the safety copy in IndexedDB) can listen for every save.
 const saveHooks = [];
 export const onSave = fn => saveHooks.push(fn);
-export function loadLocal() { try { const r = localStorage.getItem(LS); if (r) { const d = JSON.parse(r); if (d && Array.isArray(d.cols)) return d.cols; } } catch (e) {} return []; }
+export function loadLocal() { try { const r = localStorage.getItem(LS); if (r) { const d = JSON.parse(r); if (d && Array.isArray(d.cols)) return d.cols.map(cleanCol).filter(Boolean); } } catch (e) {} return []; }
 export function saveLocal() {
   const cols = S.cols.filter(c => !c.example), saved = Date.now();
   try { localStorage.setItem(LS, JSON.stringify({ cols, saved })); } catch (e) {}
@@ -50,7 +51,7 @@ export async function initCaps() {
     G.DB = db; G.UID = id;
     const sd = snap.docs.find(d => d.id === '_settings' && d.exists);
     if (sd) { const sk = (sd.data() || {}).skin; if (sk && SKINS[SKIN_ALIAS[sk] || sk] && (SKIN_ALIAS[sk] || sk) !== S.skin) { applySkin(sk); try { localStorage.setItem('kolekcionar.skin', sk); } catch (e) {} } }
-    const remote = snap.docs.filter(d => d.exists).map(d => JSON.parse(JSON.stringify(d.data()))).filter(x => x && x.id && Array.isArray(x.editions));
+    const remote = snap.docs.filter(d => d.exists).map(d => cleanCol(JSON.parse(JSON.stringify(d.data())))).filter(Boolean);
     const local = S.cols.filter(x => !x.example);
     const map = new Map(remote.map(x => [x.id, x]));
     for (const l of local) { const r = map.get(l.id); if (!r || (l.updated || 0) > (r.updated || 0)) { map.set(l.id, l); pending.add(l.id); } }

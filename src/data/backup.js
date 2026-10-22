@@ -4,6 +4,7 @@ import { render } from '../core/nav.js';
 import { G, S } from '../core/state.js';
 import { $, esc } from '../core/util.js';
 import { touch } from './store.js';
+import { cleanCol } from './model.js';
 import { toast } from '../ui/toast.js';
 
 // Remembered so the app can remind people who have never (or long ago) made a backup.
@@ -35,10 +36,10 @@ export function doImport(text) {
   let d; try { d = JSON.parse(text); } catch (e) { toast('This file is not valid JSON'); return; }
   const list = d && Array.isArray(d.cols) ? d.cols : null;
   if (!list) { toast('This is not a GotGotNeed backup'); return; }
-  const ok = list.filter(c => c && c.id && c.name && Array.isArray(c.editions) && Array.isArray(c.variants));
+  const ok = list.slice(0, 500).map(cleanCol).filter(Boolean);
   if (!ok.length) { toast('No collections found in the file'); return; }
   S.cols = S.cols.filter(c => !c.example);
-  for (const c of ok) { c.example = false; for (const ed of c.editions) { ed.have = ed.have || {}; ed.items = ed.items || []; }
+  for (const c of ok) {
     const i = S.cols.findIndex(x => x.id === c.id); if (i >= 0) S.cols[i] = c; else S.cols.push(c); touch(c); }
   render(); toast('Imported collections: ' + ok.length);
 }
