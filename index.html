@@ -679,10 +679,20 @@ function curVar(col) {
   return (list.find(v => v.id === S.varId) || list[0]).id;
 }
 
+let undoFn = null;
 function toast(msg, withUndo) {
-  const t = $('#toast');
-  t.innerHTML = '<span>' + esc(msg) + '</span>' + (withUndo ? '<button type="button" data-act="undo">Undo</button>' : '');
-  t.hidden = false; clearTimeout(toastTimer); toastTimer = setTimeout(() => { t.hidden = true; }, withUndo ? 4500 : Math.max(2200, msg.length * 55));
+  const t = $('#toast'), isFn = typeof withUndo === 'function';
+  undoFn = isFn ? withUndo : null;
+  t.innerHTML = '<span>' + esc(msg) + '</span>' + (withUndo ? '<button type="button" data-act="' + (isFn ? 'undofn' : 'undo') + '">Undo</button>' : '');
+  t.hidden = false; clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { t.hidden = true; undoFn = null; }, isFn ? 8000 : withUndo ? 4500 : Math.max(2200, msg.length * 55));
+}
+const clone = o => JSON.parse(JSON.stringify(o));
+// Remove marks/scope that belong to items no longer in the edition (deleted data is not kept).
+function purgeEd(ed) {
+  const keys = new Set(itemsOf(ed).map(i => i.k));
+  for (const key of Object.keys(ed.have)) if (!keys.has(key.slice(0, key.lastIndexOf('|')))) delete ed.have[key];
+  if (ed.vscope) for (const v of Object.keys(ed.vscope)) ed.vscope[v] = ed.vscope[v].filter(k => keys.has(k));
 }
 function syncHTML() {
   const txt = S.sync === 'cloud' ? 'Saved to your account' : S.sync === 'error' ? 'Could not save' : 'This device only';
@@ -953,7 +963,7 @@ function viewEdit() {
     '<form class="box" data-form="added"><h3>Add edition</h3><label class="field"><span class="label">Name</span><input id="aName" placeholder="e.g. 2027 edition, Update, Series B" autocomplete="off" required></label>' +
     editionForm('a', S.addMode) + '<p id="aErr" class="hint" style="color:var(--danger);margin:0" hidden></p><button class="btn" type="submit">Add edition</button></form></section>';
   h += '<section class="section"><h2>Collection</h2>' + (cf === 'col'
-    ? '<div class="confirm"><span>Delete “' + esc(col.name) + '” and all its data?</span><button class="btn small danger" type="button" data-act="delcol">Delete forever</button><button class="btn small ghost" type="button" data-act="cancel">Cancel</button></div>'
+    ? '<div class="confirm"><span>Delete “' + esc(col.name) + '” and all its data?</span><button class="btn small danger" type="button" data-act="delcol">Delete</button><button class="btn small ghost" type="button" data-act="cancel">Cancel</button></div>'
     : '<button class="btn ghost" type="button" data-act="ask" data-id="col" style="color:var(--danger)">Delete collection</button>') + '</section>';
   return h;
 }
@@ -1007,9 +1017,18 @@ document.addEventListener('click', e => {
       try { navigator.clipboard.writeText(t).then(() => toast('Copied'), fallback); } catch (err) { fallback(); } break; }
     case 'ask': S.confirm = id; render(); break;
     case 'cancel': S.confirm = null; render(); break;
-    case 'delcol': removeCol(col.id); S.confirm = null; navBack('home', 2); toast('Collection deleted'); break;
-    case 'deled': col.editions = col.editions.filter(x => x.id !== id); if (S.edId === id) S.edId = null; S.confirm = null; touch(col); render(); break;
-    case 'delvar': col.variants = col.variants.filter(x => x.id !== id);
+    case 'undofn': { const f = undoFn; undoFn = null; $('#toast').hidden = true; if (f) f(); break; }
+    case 'delcol': { const idx = S.cols.indexOf(col), copy = clone(col);
+      removeCol(col.id); S.confirm = null; navBack('home', 2);
+      toast('“' + copy.name + '” deleted', () => { S.cols.splice(Math.min(idx, S.cols.length), 0, copy); saveLocal(); push(copy); if (S.view === 'home') render(); });
+      break; }
+    case 'deled': { const before = clone(col.editions), e = col.editions.find(x => x.id === id);
+      col.editions = col.editions.filter(x => x.id !== id); if (S.edId === id) S.edId = null; S.confirm = null; touch(col); render();
+      toast('Edition “' + e.name + '” deleted', () => { col.editions = before; touch(col); render(); });
+      break; }
+    case 'delvar': { const bv = clone(col.variants), be = clone(col.editions), vn = (col.variants.find(x => x.id === id) || {}).name;
+      setTimeout(() => toast('Variant “' + vn + '” deleted', () => { col.variants = bv; col.editions = be; touch(col); render(); }), 0); }
+      col.variants = col.variants.filter(x => x.id !== id);
       for (const ed of col.editions) { for (const key of Object.keys(ed.have)) if (key.endsWith('|' + id)) delete ed.have[key]; if (ed.vscope) delete ed.vscope[id]; }
       if (S.varId === id) S.varId = null; S.confirm = null; touch(col); render(); break;
     case 'export': doExport(); break;
@@ -1058,7 +1077,8 @@ document.addEventListener('change', e => {
   else if (kind === 'cat') col.cat = val;
   else if (kind === 'var') { const v = col.variants.find(x => x.id === t.dataset.id); if (!val) { t.value = v.name; return; } v.name = val; }
   else if (kind === 'edname') { if (!val) { t.value = ed.name; return; } ed.name = val; }
-  else if (kind === 'from' || kind === 'to') {
+  const snapEd = ed && (kind === 'from' || kind === 'to' || kind === 'items') ? clone(ed) : null;
+  if (kind === 'from' || kind === 'to') {
     const n = parseInt(val, 10); const f = kind === 'from' ? n : ed.from, to = kind === 'to' ? n : ed.to;
     if (!Number.isFinite(n) || to < f || to - f + 1 > MAX_ITEMS) { t.value = ed[kind]; toast('Invalid number range'); return; }
     ed[kind] = n;
@@ -1067,8 +1087,15 @@ document.addEventListener('change', e => {
     if (d.length) { t.setAttribute('aria-invalid', 'true'); toast('Not saved. ' + dupMsg(d)); return; }
     t.removeAttribute('aria-invalid'); ed.items = ni;
   }
+  if (snapEd) {
+    const now = new Set(itemsOf(ed).map(i => i.k));
+    const lost = itemsOf(snapEd).filter(i => !now.has(i.k)).length;
+    purgeEd(ed); touch(col); render();
+    if (lost) toast(lost + (lost === 1 ? ' item removed' : ' items removed'), () => { Object.keys(ed).forEach(k => delete ed[k]); Object.assign(ed, snapEd); touch(col); render(); });
+    else toast('Saved');
+    return;
+  }
   touch(col); toast('Saved');
-  if (kind === 'items' || kind === 'from' || kind === 'to') render();
 });
 
 document.addEventListener('submit', e => {
