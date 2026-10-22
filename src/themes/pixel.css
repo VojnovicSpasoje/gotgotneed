@@ -1,5 +1,5 @@
 /* Theme: pixel – its own look, marking style and animations. */
-:root[data-skin="pixel"] .brand .logo{width:28px;height:28px;vertical-align:-8px}
+:root[data-skin="pixel"] .brand .logo{width:38px;height:18px;vertical-align:-3px}
 :root[data-skin="pixel"] .sortsel{border:2px solid var(--ink);font-size:18px}
 :root[data-skin="pixel"] .hero-big{font-size:18px;font-weight:400}
 :root[data-skin="pixel"] .hero-big span{font-size:11px}

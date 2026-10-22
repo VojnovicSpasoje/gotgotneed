@@ -31,8 +31,14 @@ h1,h2,h3{font-family:var(--f-display);margin:0;text-wrap:balance;letter-spacing:
 .summary{display:flex;gap:18px;align-items:baseline;margin:4px 0 18px;flex-wrap:wrap}
 .summary b{font-family:var(--f-display);font-size:34px;font-weight:800;line-height:1}
 .cards{display:flex;flex-direction:column;gap:10px}
-.brand .logo{display:inline-block;width:1.05em;height:1.05em;margin-right:.3em;vertical-align:-.17em;border-radius:22%;overflow:hidden;flex:none}
-.brand .logo svg{display:block;width:100%;height:100%}
+.brand .logo{display:inline-block;width:1.66em;height:.8em;margin-right:.25em;vertical-align:-.04em;flex:none}
+.brand .logo svg{display:block;width:100%;height:100%;overflow:visible}
+/* The header mark takes its colours from the theme instead of carrying its own cream tile. */
+.lg-on{fill:var(--have)}
+.lg-sh{fill:var(--have);opacity:.35}
+.lg-ck{fill:none;stroke:var(--have-ink,#fff);stroke-width:15;stroke-linecap:round;stroke-linejoin:round}
+.lg-q{fill:var(--surface);stroke:var(--ink);stroke-opacity:.5;stroke-width:7;stroke-dasharray:20 13}
+.lg-qt{fill:var(--ink);fill-opacity:.55;font:900 96px system-ui,sans-serif}
 .brand .need{color:var(--have)}
 .hometools{display:flex;gap:8px;margin-bottom:10px}
 .hometools .search{flex:1;min-width:0}
