@@ -70,7 +70,7 @@ h1,h2,h3{font-family:var(--f-display);margin:0;text-wrap:balance;letter-spacing:
 .btn.small{padding:7px 13px;font-size:13px}
 .btn.danger{background:var(--danger);color:var(--surface)}
 .btn.block{width:100%}
-.linkbtn{background:none;border:0;color:var(--accent);font-weight:600;padding:4px 0}
+.linkbtn{background:none;border:0;color:var(--have);font-weight:600;padding:4px 0}
 
 /* home */
 .summary{display:flex;gap:18px;align-items:baseline;margin:4px 0 18px;flex-wrap:wrap}
@@ -449,6 +449,30 @@ details.pick summary span{font-weight:400;color:var(--muted)}
 :root[data-skin="blueprint"] .modal-card h3{text-transform:uppercase;letter-spacing:.08em;font-size:16px}
 :root[data-skin="neon"] .modal-card{border-color:#FF3EA5;box-shadow:0 0 18px rgba(255,62,165,.35)}
 :root[data-skin="neon"] .modal-card h3{font-weight:400;color:#FF6CBE}
+.modal-card.sheet{max-width:440px;max-height:calc(100% - 16px);overflow-y:auto;gap:12px}
+.modal-card.sheet h3{font-size:20px}
+.bkdisp{min-height:52px;border:1px solid var(--line);border-radius:12px;padding:10px 14px;font-family:var(--f-mono);font-size:22px;background:var(--bg);word-break:break-word;line-height:1.35}
+.bkdisp .caret{display:inline-block;width:2px;height:1.05em;background:var(--accent);vertical-align:-.15em;margin-left:1px;animation:k-blink 1s steps(1) infinite}
+@keyframes k-blink{50%{opacity:0}}
+.pad{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.key{height:52px;border-radius:12px;border:1px solid var(--line);background:var(--surface);color:var(--ink);font-family:var(--f-mono);font-size:22px;font-weight:600;touch-action:manipulation;-webkit-user-select:none;user-select:none}
+.key:active{background:var(--sunk)}
+.key.next{grid-column:1/-1;font-family:var(--f-body);font-size:16px}
+.bktext{width:100%;border:1px solid var(--line);background:var(--bg);border-radius:12px;padding:10px 12px;font-family:var(--f-mono);font-size:17px;resize:vertical}
+.bkprev{display:flex;flex-direction:column;gap:8px}
+.bksum{font-size:13px;font-weight:600}
+.bkchips{display:flex;flex-wrap:wrap;gap:6px;max-height:160px;overflow-y:auto}
+.bchip{display:inline-flex;align-items:center;gap:5px;padding:4px 9px;border-radius:999px;font-size:13px;font-weight:600;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);font-family:var(--f-mono)}
+.bchip small{font-weight:500;opacity:.85}
+.bchip span{opacity:.5}
+.bchip.new{border-color:var(--have);background:color-mix(in srgb,var(--have) 14%,var(--surface))}
+.bchip.dup{border-color:var(--dup);background:var(--dup-soft);color:var(--ink)}
+.bchip.range{border-color:var(--accent);border-style:dashed}
+.bchip.bad{border-color:var(--danger);color:var(--danger);text-decoration:line-through}
+:root[data-skin="album"] .key,:root[data-skin="album"] .bkdisp,:root[data-skin="album"] .bktext{border-radius:3px}
+:root[data-skin="pixel"] .key{border:2px solid var(--ink);font-family:var(--f-body);font-size:26px}
+:root[data-skin="blueprint"] .key{border-radius:0;background:transparent}
+:root[data-skin="neon"] .key{background:#12121C;border-color:#2A2A40}
 .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(18px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--bg);border-radius:999px;padding:10px 10px 10px 16px;display:flex;gap:12px;align-items:center;font-size:14px;z-index:20;max-width:calc(100% - 32px)}
 .toast button{background:none;border:0;color:var(--bg);font-weight:700;text-decoration:underline;padding:2px 6px}
 .example-note{font-size:13px;padding:10px 12px;border-radius:var(--r);background:var(--dup-soft);color:var(--ink);margin-bottom:12px}
@@ -694,6 +718,83 @@ function curVar(col) {
   return (list.find(v => v.id === S.varId) || list[0]).id;
 }
 
+/* ---------- add many at once ---------- */
+let BK = null;
+function bkPrefKb() { try { return localStorage.getItem('ggn.bulkKb') || 'pad'; } catch (e) { return 'pad'; } }
+function openBulk() {
+  const col = curCol(), ed = curEd(col);
+  BK = { text: '', vid: curVar(col), kb: ed.mode === 'range' ? bkPrefKb() : 'phone' };
+  modalFocus = document.activeElement;
+  renderBulk(); $('#modal').hidden = false;
+  const t = $('#bkText'); if (t) t.focus();
+}
+function bkTokens(ed) { return ed.mode === 'range' ? BK.text.split(/[\s,;]+/).filter(Boolean) : BK.text.split(/[\n,;]+/).map(x => x.trim()).filter(Boolean); }
+function bkParse() {
+  const col = curCol(), ed = curEd(col), vid = BK.vid, sim = {}, out = [];
+  const get = k => (k in sim ? sim[k] : cnt(ed, k, vid));
+  const hit = k => { const c = get(k); sim[k] = c + 1; return c === 0 ? 'new' : 'dup'; };
+  let nNew = 0, nDup = 0, nBad = 0; const adds = [];
+  for (const tok of bkTokens(ed)) {
+    if (ed.mode === 'range') {
+      const m = tok.replace(/[–—]/g, '-').match(/^(\d+)(?:-(\d+))?$/);
+      if (!m) { out.push({ tok, cls: 'bad', label: tok }); nBad++; continue; }
+      let a = +m[1], b = m[2] !== undefined && m[2] !== '' ? +m[2] : a; if (b < a) [a, b] = [b, a];
+      if (m[2] !== undefined && b - a > 2000) { out.push({ tok, cls: 'bad', label: tok }); nBad++; continue; }
+      let cn = 0, cd = 0, cb = 0;
+      for (let n = a; n <= b; n++) { const k = String(n); if (n < ed.from || n > ed.to || !inScope(ed, vid, k)) { cb++; continue; } const r = hit(k); r === 'new' ? cn++ : cd++; adds.push(k); }
+      nNew += cn; nDup += cd; nBad += cb;
+      const cls = a === b ? (cb ? 'bad' : cn ? 'new' : 'dup') : (cn + cd === 0 ? 'bad' : 'range');
+      out.push({ tok, cls, label: a === b ? String(a) : a + '–' + b, sub: a === b ? (cls === 'dup' ? '×' + get(String(a)) : '') : [cn && cn + ' new', cd && cd + ' dup', cb && cb + ' ✕'].filter(Boolean).join(' · ') });
+    } else {
+      const w = normName(tok), it = ed.items.find(i => normName(i.name) === w || (i.sn && normName(i.sn) === w));
+      if (!it || !inScope(ed, vid, it.k)) { out.push({ tok, cls: 'bad', label: tok }); nBad++; continue; }
+      const r = hit(it.k); r === 'new' ? nNew++ : nDup++; adds.push(it.k);
+      out.push({ tok, cls: r, label: it.name, sub: r === 'dup' ? '×' + get(it.k) : '' });
+    }
+  }
+  return { out, nNew, nDup, nBad, adds };
+}
+function bkSuggest(ed) {
+  if (ed.mode === 'range') return [];
+  const parts = BK.text.split(/[\n,;]/), last = normName(parts[parts.length - 1] || '');
+  if (!last) return [];
+  return itemsOf(ed).filter(i => inScope(ed, BK.vid, i.k) && normName(i.name).includes(last) && normName(i.name) !== last).slice(0, 6);
+}
+function renderBulk() {
+  const col = curCol(), ed = curEd(col), range = ed.mode === 'range';
+  const vvis = col.variants.filter(v => edStats(col, ed, v.id).total > 0);
+  let h = '<div class="modal-card sheet" role="dialog" aria-modal="true" aria-labelledby="bkTitle"><div class="rowwrap" style="justify-content:space-between"><h3 id="bkTitle">Add many</h3><button class="iconbtn" type="button" data-act="mcancel" aria-label="Close" style="width:34px;height:34px">✕</button></div>' +
+    '<p class="hint" style="margin:0">' + (range ? 'Enter numbers as you got them. A number that repeats counts as a duplicate. Use a dash for a run, like 101-117.' : 'Type names, separated by commas or new lines. Pick from the suggestions to avoid typos.') + '</p>';
+  if (vvis.length > 1) h += '<div class="seg" role="group" aria-label="Variant">' + vvis.map(v => '<button type="button" data-act="bkvar" data-id="' + v.id + '" aria-pressed="' + (v.id === BK.vid) + '">' + (v.bonus ? '★ ' : '') + esc(v.name) + '</button>').join('') + '</div>';
+  if (range && BK.kb === 'pad') {
+    h += '<div class="bkdisp" id="bkDisp" aria-live="polite"></div>' +
+      '<div class="pad">' + ['1', '2', '3', '4', '5', '6', '7', '8', '9', '-', '0', 'del'].map(k => '<button type="button" class="key" data-act="bk" data-id="' + k + '" aria-label="' + (k === 'del' ? 'Delete' : k === '-' ? 'Range dash' : k) + '">' + (k === 'del' ? '⌫' : k === '-' ? '–' : k) + '</button>').join('') +
+      '<button type="button" class="key next" data-act="bk" data-id="sp">Next number ␣</button></div>' +
+      '<button class="linkbtn" type="button" data-act="bkkb" data-id="phone" style="align-self:flex-start">Use phone keyboard</button>';
+  } else {
+    h += '<textarea id="bkText" class="bktext" rows="3" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="' + (range ? '12 45 67 103 103 210  or  101-117' : 'Messi, Mascot, Trophy') + '">' + esc(BK.text) + '</textarea>' +
+      (range ? '' : '<div class="chips" id="bkSug" style="margin:0"></div>') +
+      (range ? '<button class="linkbtn" type="button" data-act="bkkb" data-id="pad" style="align-self:flex-start">Use number pad</button>' : '');
+  }
+  h += '<div id="bkPrev" class="bkprev"></div><div class="modal-actions"><button class="btn ghost" type="button" data-act="bkclear">Clear</button><button class="btn" type="button" data-act="bkadd" id="bkAdd">Add</button></div></div>';
+  $('#modal').innerHTML = h; bkUpdate();
+}
+function bkUpdate() {
+  const ed = curEd(curCol()), r = bkParse();
+  const d = $('#bkDisp'); if (d) d.innerHTML = esc(BK.text) + '<span class="caret"></span>';
+  $('#bkPrev').innerHTML = (r.out.length ? '<div class="bksum">' + [r.nNew + ' new', r.nDup + ' duplicate' + (r.nDup === 1 ? '' : 's'), r.nBad ? r.nBad + ' not in this album' : ''].filter(Boolean).join(' · ') + '</div>' : '<div class="bksum muted">Nothing entered yet</div>') +
+    '<div class="bkchips">' + r.out.map((c, i) => '<button type="button" class="bchip ' + c.cls + '" data-act="bkchip" data-id="' + i + '" aria-label="Remove ' + esc(c.label) + '">' + esc(c.label) + (c.sub ? ' <small>' + esc(c.sub) + '</small>' : '') + ' <span aria-hidden="true">×</span></button>').join('') + '</div>';
+  const n = r.adds.length, b = $('#bkAdd'); b.textContent = n ? 'Add ' + n : 'Add'; b.disabled = !n;
+  const sg = $('#bkSug'); if (sg) sg.innerHTML = bkSuggest(ed).map(i => '<button type="button" class="chip" data-act="bksug" data-id="' + i.k + '">' + esc(i.name) + '</button>').join('');
+}
+function bkApply() {
+  const col = curCol(), ed = curEd(col), r = bkParse(); if (!r.adds.length) return;
+  const before = clone(ed.have), vid = BK.vid;
+  for (const k of r.adds) setCnt(ed, k, vid, cnt(ed, k, vid) + 1);
+  S.varId = vid; closeModal(); touch(col); render();
+  toast('Added ' + r.adds.length + ' · ' + r.nNew + ' new, ' + r.nDup + ' dup', () => { ed.have = before; touch(col); render(); });
+}
+
 /* ---------- confirmation window ---------- */
 let modalAct = null, modalFocus = null;
 function openModal(title, text, okLabel, act, id) {
@@ -704,7 +805,7 @@ function openModal(title, text, okLabel, act, id) {
     '<div class="modal-actions"><button class="btn ghost" type="button" data-act="mcancel">Cancel</button><button class="btn danger" type="button" data-act="mok">' + esc(okLabel) + '</button></div></div>';
   m.hidden = false; m.querySelector('[data-act="mcancel"]').focus();
 }
-function closeModal() { const m = $('#modal'); m.hidden = true; m.innerHTML = ''; modalAct = null; try { modalFocus && modalFocus.focus(); } catch (e) {} }
+function closeModal() { const m = $('#modal'); m.hidden = true; m.innerHTML = ''; modalAct = null; BK = null; try { modalFocus && modalFocus.focus(); } catch (e) {} }
 function runAct(act, id) { const f = document.createElement('button'); f.type = 'button'; f.hidden = true; f.dataset.act = act; if (id) f.dataset.id = id; document.body.appendChild(f); f.click(); f.remove(); }
 function askDelete(col, id) {
   if (id === 'col') return openModal('Delete collection?', '“' + col.name + '” and everything you marked in it will be deleted.', 'Delete', 'delcol');
@@ -831,6 +932,7 @@ function viewCol() {
   h += '<div class="tools"><input class="search" id="q" type="search" placeholder="' + (ed.mode === 'range' ? 'Find a number…' : 'Search name or serial number…') + '" value="' + esc(S.q) + '">' +
     '<div class="rowwrap" style="justify-content:space-between"><div class="seg" role="group" aria-label="Filter">' + flt.map(([k, l]) => '<button type="button" data-act="filter" data-id="' + k + '" aria-pressed="' + (S.filter === k) + '">' + l + '</button>').join('') + '</div>' +
     '<div class="seg" role="group" aria-label="Tap action">' + [['toggle', 'Mark'], ['plus', '+1'], ['minus', '−1']].map(([k, l]) => '<button type="button" data-act="mode" data-id="' + k + '" aria-pressed="' + (S.mode === k) + '">' + l + '</button>').join('') + '</div>' +
+    '<button class="btn small" type="button" data-act="bulk">+ Add many</button>' +
     (ed.mode === 'list' ? '<div class="seg" role="group" aria-label="Layout">' + [['list', 'List'], ['grid', 'Grid']].map(([k, l]) => '<button type="button" data-act="lview" data-id="' + k + '" aria-pressed="' + ((ed.view || 'grid') === k) + '">' + l + '</button>').join('') + '</div>' : '') + '</div>' +
     '<div class="hint">' + (S.mode === 'toggle' ? 'Tap to mark or unmark an item.' : S.mode === 'plus' ? 'Tap to add another copy (duplicate).' : 'Tap to remove one copy.') + '</div></div>';
   h += '<div id="items">' + itemsHTML(col, ed, vid) + '</div>';
@@ -1053,6 +1155,20 @@ document.addEventListener('click', e => {
     case 'ask': askDelete(col, id); break;
     case 'mok': { const m = modalAct; closeModal(); if (m) runAct(m.act, m.id); break; }
     case 'mcancel': closeModal(); break;
+    case 'bulk': openBulk(); break;
+    case 'bk': { const t = BK.text;
+      if (id === 'del') BK.text = t.slice(0, -1);
+      else if (id === 'sp') { if (t && !/\s$/.test(t)) BK.text = t + ' '; }
+      else if (id === '-') { if (/\d$/.test(t)) BK.text = t + '-'; }
+      else BK.text = t + id;
+      try { navigator.vibrate && navigator.vibrate(8); } catch (err) {}
+      bkUpdate(); break; }
+    case 'bkkb': BK.kb = id; try { localStorage.setItem('ggn.bulkKb', id); } catch (err) {} renderBulk(); if (id === 'phone') { const t = $('#bkText'); t.focus(); t.setSelectionRange(t.value.length, t.value.length); } break;
+    case 'bkvar': BK.vid = id; b.parentElement.querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', String(x === b))); bkUpdate(); break;
+    case 'bkchip': { const ed = curEd(col), toks = bkTokens(ed); toks.splice(+id, 1); BK.text = ed.mode === 'range' ? (toks.join(' ') + (toks.length ? ' ' : '')) : (toks.join(', ') + (toks.length ? ', ' : '')); const t = $('#bkText'); if (t) t.value = BK.text; bkUpdate(); break; }
+    case 'bksug': { const ed = curEd(col), it = ed.items.find(i => i.k === id); const parts = BK.text.split(/([\n,;])/); parts[parts.length - 1] = (BK.text.match(/[\n,;]\s*$/) ? '' : ' ') + it.name; BK.text = parts.join('').replace(/^\s+/, '') + ', '; const t = $('#bkText'); t.value = BK.text; t.focus(); bkUpdate(); break; }
+    case 'bkclear': BK.text = ''; { const t = $('#bkText'); if (t) t.value = ''; } bkUpdate(); break;
+    case 'bkadd': bkApply(); break;
     case 'cancel': S.confirm = null; render(); break;
     case 'undofn': { const f = undoFn; undoFn = null; $('#toast').hidden = true; if (f) f(); break; }
     case 'delcol': { const idx = S.cols.indexOf(col), copy = clone(col);
@@ -1074,6 +1190,7 @@ document.addEventListener('click', e => {
 
 let pickTimer = null;
 document.addEventListener('input', e => {
+  if (e.target.id === 'bkText' && BK) { BK.text = e.target.value; bkUpdate(); return; }
   if (e.target.id === 'hq') { S.homeQ = e.target.value; $('#cards').innerHTML = cardsHTML(); return; }
   if (e.target.id === 'nitems' || e.target.id === 'aitems') {
     const d = dupNames(parseLines(e.target.value)), w = document.getElementById(e.target.id[0] + 'dup');
