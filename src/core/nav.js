@@ -5,7 +5,7 @@ import { $ } from './util.js';
 import { curCol } from '../data/select.js';
 
 export const views = {};
-export const DEPTH = { home: 0, col: 1, new: 1, edit: 2, settings: 1, feedback: 1 };
+export const DEPTH = { home: 0, col: 1, new: 1, edit: 2, settings: 1, themes: 2, feedback: 2 };
 export function registerView(name, fn, depth) { views[name] = fn; DEPTH[name] = depth; }
 // Features that need to add something after a screen is drawn (e.g. temporary test tools).
 const renderHooks = [];

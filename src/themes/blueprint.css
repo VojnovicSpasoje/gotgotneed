@@ -45,3 +45,4 @@
 :root[data-skin="blueprint"] .modal-card h3{text-transform:uppercase;letter-spacing:.08em;font-size:16px}
 :root[data-skin="blueprint"] .key{border-radius:0;background:transparent}
 :root[data-skin="blueprint"] .viewbtn{border-radius:0;background:transparent}
+:root[data-skin="blueprint"] .setbox,:root[data-skin="blueprint"] .setswitch i{border-radius:0;background:transparent}

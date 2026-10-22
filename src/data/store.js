@@ -56,6 +56,6 @@ export async function initCaps() {
     for (const l of local) { const r = map.get(l.id); if (!r || (l.updated || 0) > (r.updated || 0)) { map.set(l.id, l); pending.add(l.id); } }
     if (map.size) { S.cols = [...map.values()].sort((a, b) => ((a.order ?? 1e9) - (b.order ?? 1e9)) || ((a.created || 0) - (b.created || 0))); saveLocal(); }
     S.sync = 'cloud';
-    if (S.view === 'home' || S.view === 'col' || S.view === 'settings') { if (S.view === 'col' && !curCol()) S.view = 'home'; render(); } else setSync('cloud');
+    if (S.view === 'home' || S.view === 'col' || S.view === 'settings' || S.view === 'themes') { if (S.view === 'col' && !curCol()) S.view = 'home'; render(); } else setSync('cloud');
   } catch (e) { G.DB = null; }
 }

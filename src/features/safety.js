@@ -67,6 +67,7 @@ export function needsReminder(now = Date.now()) {
   if (G.DB) return false;                       // inside Claude everything is already saved to the account
   const mine = own(); if (!mine.length) return false;
   const b = backupInfo();
+  if (b.off) return false;                      // turned off in Settings
   if (b.snooze && now < b.snooze) return false;
   if (b.last && newest(mine) <= b.last) return false;   // nothing changed since the last backup
   const since = b.last || Math.min(...mine.map(c => c.created || now));

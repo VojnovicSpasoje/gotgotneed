@@ -1,6 +1,6 @@
-// TEMPORARY testing helper: "+ Test" next to "+ New" creates two ready-made test collections
+// TEMPORARY testing helper: "+ Test collections" (in Settings, optionally also on home) creates two ready-made test collections
 // (one by numbers, one by names). Remove this file and its import in main.js before release.
-import { onAct } from '../core/events.js';
+import { onAct, onChange } from '../core/events.js';
 import { onRender, render } from '../core/nav.js';
 import { S } from '../core/state.js';
 import { uid } from '../core/util.js';
@@ -8,11 +8,21 @@ import { setCnt } from '../data/model.js';
 import { touch } from '../data/store.js';
 import { toast } from '../ui/toast.js';
 
+// Lives at the bottom of Settings; a switch there can also show "+ Test" on the home screen.
+const DEV_HOME = 'ggn.devHome';
+const devHome = () => { try { return localStorage.getItem(DEV_HOME) === '1'; } catch (e) { return false; } };
 onRender(() => {
-  if (S.view !== 'home' || document.querySelector('[data-act="devtest"]')) return;
+  if (S.view === 'settings' && !document.getElementById('devsec')) {
+    document.getElementById('app').insertAdjacentHTML('beforeend', '<section class="setsec" id="devsec"><h2>Testing <span class="muted" style="font-weight:400">(temporary)</span></h2><div class="setbox setpad">' +
+      '<p class="hint" style="margin:0">Adds two ready-made collections (one by numbers, one by names) for trying things out. Will be removed before release.</p>' +
+      '<div class="rowwrap"><button class="btn small ghost" type="button" data-act="devtest">+ Test collections</button></div>' +
+      '<label class="setswitch"><span>Show “+ Test” on the home screen</span><input type="checkbox" id="devHomeSw"' + (devHome() ? ' checked' : '') + '><i aria-hidden="true"></i></label></div></section>');
+  }
+  if (S.view !== 'home' || !devHome() || document.querySelector('.top [data-act="devtest"]')) return;
   const newBtn = document.querySelector('.top [data-act="new"]');
   if (newBtn) newBtn.insertAdjacentHTML('beforebegin', '<button class="btn small ghost" type="button" data-act="devtest" title="Testing only">+ Test</button>');
 });
+onChange(e => { if (e.target.id === 'devHomeSw') { try { localStorage.setItem(DEV_HOME, e.target.checked ? '1' : '0'); } catch (err) {} return true; } });
 
 function testCollections() {
   // Dated 20 days back so the backup reminder shows up right away.

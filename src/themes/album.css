@@ -76,3 +76,4 @@
 :root[data-skin="album"] .modal-card h3{font-family:var(--f-display);font-size:28px}
 :root[data-skin="album"] .key,:root[data-skin="album"] .bkdisp,:root[data-skin="album"] .bktext{border-radius:3px}
 :root[data-skin="album"] .viewbtn{border-radius:4px}
+:root[data-skin="album"] .setbox{border-radius:4px}

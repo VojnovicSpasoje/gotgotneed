@@ -10,7 +10,7 @@ import { toast } from '../ui/toast.js';
 export const BACKUP_KEY = 'ggn.backup';
 export function backupInfo() { try { return JSON.parse(localStorage.getItem(BACKUP_KEY) || '{}') || {}; } catch (e) { return {}; } }
 export function setBackupInfo(patch) { try { localStorage.setItem(BACKUP_KEY, JSON.stringify({ ...backupInfo(), ...patch })); } catch (e) {} }
-export const markBackedUp = () => { setBackupInfo({ last: Date.now() }); document.getElementById('bknudge')?.remove(); };
+export const markBackedUp = () => { setBackupInfo({ last: Date.now() }); document.getElementById('bknudge')?.remove(); if (S.view === 'settings') render(); };
 
 export function backupJSON() { return JSON.stringify({ app: 'kolekcionar', version: 1, exported: new Date().toISOString(), cols: S.cols.filter(c => !c.example) }, null, 1); }
 export function showExportText(msg) {

@@ -6,7 +6,7 @@ import { $, ICON } from '../core/util.js';
 
 export const FB_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSea40DArCVmv6iyeKB77mWZiNpS2U_73EJ3kQJKYhLHkSh1jQ/formResponse';
 export function viewFeedback() {
-  let h = '<header class="top"><button class="iconbtn" type="button" data-act="home" aria-label="Back">' + ICON.back + '</button><h1>Send feedback</h1></header>';
+  let h = '<header class="top"><button class="iconbtn" type="button" data-act="toSettings" aria-label="Back">' + ICON.back + '</button><h1>Send feedback</h1></header>';
   if (S.fbSent) return h + '<div class="box" style="text-align:center;align-items:center"><h3 style="font-size:22px">Thank you!</h3><p class="muted" style="margin:0">Your message was sent. We read every one.</p><button class="btn" type="button" data-act="home">Back to collections</button></div>';
   return h + '<form class="box" data-form="feedback" style="margin-top:6px"><p class="muted" style="margin:0">Tell us what you would change or add, or report a problem.</p>' +
     '<div class="field"><span class="label">Type</span><div class="seg" role="group" aria-label="Feedback type">' + ['Idea', 'Bug', 'Other'].map(t => '<button type="button" data-act="fbtype" data-id="' + t + '" aria-pressed="' + (S.fbType === t) + '">' + t + '</button>').join('') + '</div></div>' +
@@ -18,7 +18,7 @@ export function viewFeedback() {
     '<p class="hint" style="margin:0">Your message goes to the GotGotNeed team. See the <a href="https://vojnovicspasoje.github.io/gotgotneed/privacy.html" target="_blank" rel="noopener">privacy policy</a>.</p></form>';
 }
 
-registerView('feedback', viewFeedback, 1);
+registerView('feedback', viewFeedback, 2);
 onAct({
   fb: () => { S.fbSent = false; go('feedback'); },
   fbtype: ({ b, id }) => { S.fbType = id; b.parentElement.querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', String(x === b))); },

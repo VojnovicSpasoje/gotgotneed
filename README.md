@@ -27,7 +27,7 @@ src/
     share.js          pack an edition into a swap link, compare with a friend's (tested)
     examples.js       example collections for first-time users
   ui/                 toast (messages + Undo), modal (confirmation window)
-  views/              one file per screen: home, collection, new, edit, feedback (+ drag to reorder)
+  views/              one file per screen: home, collection, new, edit, settings, feedback (+ drag to reorder)
   features/           bigger add-ons: bulk.js (“Add many”), safety.js (safety copy, backup reminder), trade.js (swap with a friend: QR/link + compare)
   lib/qr.js           QR code generator (no outside service)
   themes/             themes.js (colors, fonts, picker) + one CSS file per theme

@@ -42,15 +42,15 @@ export function skinPreview(id) {
     '<div class="sk-slots">' + slot(1, 1) + slot(2, 1, 1) + slot(3) + slot(4, 1) + slot(5) + slot(6, 1) + '</div></div>';
 }
 export function viewSkins() {
-  return '<header class="top"><button class="iconbtn" type="button" data-act="home" aria-label="Back">' + ICON.back + '</button><h1>Themes</h1></header>' +
+  return '<header class="top"><button class="iconbtn" type="button" data-act="toSettings" aria-label="Back">' + ICON.back + '</button><h1>Themes</h1></header>' +
     '<p class="hint" style="margin:0 0 14px">Pick a look. It applies right away and is saved to your account.</p>' +
     '<div class="skins">' + Object.keys(SKINS).map(id => { const d = SKINS[id];
       return '<button class="skin" type="button" data-act="skin" data-id="' + id + '" aria-pressed="' + (S.skin === id) + '">' + skinPreview(id) +
         '<span class="nm">' + d.name + (S.skin === id ? '<small>✓ In use</small>' : '') + '</span><span class="nt">' + d.note + '</span></button>'; }).join('') + '</div>';
 }
 
-registerView('settings', viewSkins, 1);
+registerView('themes', viewSkins, 2);
 onAct({
-  skins: () => go('settings'),
+  themes: () => go('themes'),
   skin: ({ id }) => { applySkin(id); saveSkin(); render(); toast(SKINS[S.skin].name + ' theme on'); },
 });

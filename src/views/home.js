@@ -35,7 +35,7 @@ export function viewHome() {
   const cols = S.cols;
   const tot = cols.reduce((a, c) => { const s = colStats(c); a.o += s.owned; a.t += s.total; a.d += s.dups; return a; }, { o: 0, t: 0, d: 0 });
   const hasEx = cols.some(c => c.example);
-  let h = '<header class="top"><h1 class="brand"><span class="logo"><svg viewBox="28 140 456 220" aria-hidden="true"><g transform="rotate(-9 117 254)"><rect class="lg-sh" x="47" y="175" width="140" height="176" rx="20"/><rect class="lg-on" x="47" y="168" width="140" height="176" rx="20"/><path class="lg-ck" d="M85 256 l22 22 l42 -46"/></g><g><rect class="lg-sh" x="186" y="163" width="140" height="176" rx="20"/><rect class="lg-on" x="186" y="156" width="140" height="176" rx="20"/><path class="lg-ck" d="M224 244 l22 22 l42 -46"/></g><g transform="rotate(9 395 254)"><rect class="lg-q" x="328" y="171" width="134" height="170" rx="18"/><text class="lg-qt" x="395" y="290" text-anchor="middle">?</text></g></svg></span>GotGot<span class="need">Need</span></h1><button class="iconbtn" type="button" data-act="skins" aria-label="Themes">' + ICON.palette + '</button><button class="btn small" type="button" data-act="new" aria-label="New collection">+ New</button></header>';
+  let h = '<header class="top"><h1 class="brand"><span class="logo"><svg viewBox="28 140 456 220" aria-hidden="true"><g transform="rotate(-9 117 254)"><rect class="lg-sh" x="47" y="175" width="140" height="176" rx="20"/><rect class="lg-on" x="47" y="168" width="140" height="176" rx="20"/><path class="lg-ck" d="M85 256 l22 22 l42 -46"/></g><g><rect class="lg-sh" x="186" y="163" width="140" height="176" rx="20"/><rect class="lg-on" x="186" y="156" width="140" height="176" rx="20"/><path class="lg-ck" d="M224 244 l22 22 l42 -46"/></g><g transform="rotate(9 395 254)"><rect class="lg-q" x="328" y="171" width="134" height="170" rx="18"/><text class="lg-qt" x="395" y="290" text-anchor="middle">?</text></g></svg></span>GotGot<span class="need">Need</span></h1><button class="iconbtn" type="button" data-act="settings" aria-label="Settings">' + ICON.gear + '</button><button class="btn small" type="button" data-act="new" aria-label="New collection">+ New</button></header>';
   if (cols.length) {
     h += '<div class="summary"><span><b>' + fmtPct(pct(tot.o, tot.t)) + '</b></span><span class="muted"><span class="num">' + tot.o + '</span> of <span class="num">' + tot.t + '</span> collected · <span class="num">' + tot.d + '</span> duplicates</span>' + syncHTML() + '</div>';
     if (hasEx) h += '<div class="example-note">These are <strong>examples</strong> to show how it works. They disappear once you create your own collection. Edit an example and it becomes yours and is saved.</div>';
@@ -50,12 +50,6 @@ export function viewHome() {
   } else {
     h += '<div class="empty"><h2 style="font-size:20px;color:var(--ink);margin-bottom:6px">No collections yet</h2><p style="margin:0">Add a sticker album, coins, cards or anything else you collect.</p><button class="btn" type="button" data-act="new" style="margin-top:14px">+ New collection</button></div><div style="margin-top:10px">' + syncHTML() + '</div>';
   }
-  h += '<details class="panel"><summary>Backup <span class="muted">▾</span></summary><div class="stack" style="margin-top:12px">' +
-    '<p class="hint" style="margin:0">Save all collections to a file and restore them later, on another phone or in a future version of the app.</p>' +
-    '<div class="rowwrap"><button class="btn small ghost" type="button" data-act="export">Export (.json)</button>' +
-    '<label class="btn small ghost" for="importFile">Import from file</label><input id="importFile" type="file" accept=".json,application/json" hidden></div>' +
-    '<div id="exportOut"></div></div></details>' +
-    '<p class="hint" style="margin:22px 0 0;text-align:center"><button class="linkbtn" type="button" data-act="fb">Send feedback</button> &nbsp;·&nbsp; <a href="https://vojnovicspasoje.github.io/gotgotneed/privacy.html" target="_blank" rel="noopener" style="color:var(--muted)">Privacy policy</a></p>';
   return h;
 }
 
