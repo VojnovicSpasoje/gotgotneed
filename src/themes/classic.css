@@ -6,6 +6,15 @@
 .sk-prev[data-p="classic"] b{background:#B97A00}
 .sk-prev[data-p="classic"] .sk-bar{background:#E2E7EF}
 .sk-prev[data-p="classic"] .sk-bar span{background:#13785A}
+/* The preview follows the phone's light/dark mode, like the theme itself. */
+@media (prefers-color-scheme: dark){
+.sk-prev[data-p="classic"]{background:#0E131B;color:#E4E9F1;border-color:#2B3647}
+.sk-prev[data-p="classic"] i{border-color:#2B3647;color:#95A2B6}
+.sk-prev[data-p="classic"] i.on{background:#2DB088;border-color:#2DB088;color:#06231A}
+.sk-prev[data-p="classic"] b{background:#E9B43C}
+.sk-prev[data-p="classic"] .sk-bar{background:#1D2633}
+.sk-prev[data-p="classic"] .sk-bar span{background:#2DB088}
+}
 :root[data-skin="classic"] .btn:not(.ghost):not(.danger){background:var(--ink);color:var(--bg)}
 :root[data-skin="classic"] .slot.on{box-shadow:0 2px 0 rgba(0,0,0,.14)}
 :root[data-skin="classic"] .slot.on::after{content:"";position:absolute;right:0;bottom:0;width:13px;height:13px;background:linear-gradient(135deg,transparent 50%,rgba(255,255,255,.6) 50%);border-top-left-radius:5px;border-bottom-right-radius:6px}
