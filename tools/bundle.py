@@ -6,7 +6,7 @@ Usage: python3 tools/bundle.py [out.html]
 import os, re, sys
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SRC = os.path.join(ROOT, 'src')
-IMPORT = re.compile(r"^import\s+(?:\{[^}]*\}\s+from\s+)?'([^']+)';\s*$", re.M)
+IMPORT = re.compile(r"^import\s+(?:\{[^}]*\}\s+from\s+)?'([^']+)';[^\n]*$", re.M)
 
 def deps(path):
     code = open(path).read()
