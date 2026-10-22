@@ -8,7 +8,7 @@ export const SHARE_VERSION = 'GGN1';
 export const NA = 0, MISS = 1, HAVE = 2, SPARE = 3;
 
 const clean = s => String(s || '').replace(/[\t\n\r]+/g, ' ').trim();
-const stateOf = (ed, k, vid) => { if (!inScope(ed, vid, k)) return NA; const c = cnt(ed, k, vid); return c === 0 ? MISS : c === 1 ? HAVE : SPARE; };
+const itemState = (ed, k, vid) => { if (!inScope(ed, vid, k)) return NA; const c = cnt(ed, k, vid); return c === 0 ? MISS : c === 1 ? HAVE : SPARE; };
 
 /** Plain-text form of one edition (compressed later). */
 export function packEdition(col, ed) {
@@ -16,8 +16,8 @@ export function packEdition(col, ed) {
   const head = [SHARE_VERSION, clean(col.name), clean(ed.name), ed.mode === 'range' ? 'r ' + ed.from + ' ' + ed.to : 'l', vs.map(v => clean(v.name)).join('\t')];
   const items = itemsOf(ed);
   const body = ed.mode === 'range'
-    ? vs.map(v => items.map(it => stateOf(ed, it.k, v.id)).join(''))
-    : items.map(it => clean(it.name) + '\t' + clean(it.sn) + '\t' + vs.map(v => stateOf(ed, it.k, v.id)).join(''));
+    ? vs.map(v => items.map(it => itemState(ed, it.k, v.id)).join(''))
+    : items.map(it => clean(it.name) + '\t' + clean(it.sn) + '\t' + vs.map(v => itemState(ed, it.k, v.id)).join(''));
   return head.concat(body).join('\n');
 }
 
