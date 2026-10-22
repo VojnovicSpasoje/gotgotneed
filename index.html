@@ -435,6 +435,20 @@ details.pick summary span{font-weight:400;color:var(--muted)}
 :root[data-skin="blueprint"] .dupc{background:var(--dup);color:#123A6B;font-weight:700;padding:1px 6px}
 :root[data-skin="blueprint"] .check.on{background:transparent;border:2px solid #fff;color:#fff}
 :root[data-skin="blueprint"] .meta,:root[data-skin="blueprint"] .label,:root[data-skin="blueprint"] .tabs button{font-family:var(--f-mono);text-transform:uppercase;letter-spacing:.06em;font-size:11px}
+.modal{position:fixed;inset:0;z-index:40;background:rgba(8,12,20,.55);display:grid;place-items:center;padding:24px max(16px,env(safe-area-inset-right,0px)) 24px max(16px,env(safe-area-inset-left,0px))}
+.modal-card{background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:18px;width:100%;max-width:360px;padding:22px;display:flex;flex-direction:column;gap:10px;box-shadow:0 20px 50px rgba(0,0,0,.35)}
+.modal-card h3{font-size:20px}
+.modal-card p{margin:0;color:var(--muted)}
+.modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:8px;flex-wrap:wrap}
+@media (prefers-reduced-motion: no-preference){.modal{animation:m-fade .15s ease-out}.modal-card{animation:m-pop .2s ease-out}@keyframes m-fade{from{opacity:0}}@keyframes m-pop{from{transform:scale(.94);opacity:0}}}
+:root[data-skin="album"] .modal-card{border-radius:2px;border:0;box-shadow:0 2px 3px rgba(80,60,20,.2),0 18px 40px rgba(60,40,10,.3)}
+:root[data-skin="album"] .modal-card h3{font-family:var(--f-display);font-size:28px}
+:root[data-skin="pixel"] .modal-card{border:3px solid var(--ink);box-shadow:6px 6px 0 var(--muted)}
+:root[data-skin="pixel"] .modal-card h3{font-size:13px;line-height:1.6;font-weight:400}
+:root[data-skin="blueprint"] .modal-card{border-radius:0;border:1.5px solid var(--line);background:#123A6B}
+:root[data-skin="blueprint"] .modal-card h3{text-transform:uppercase;letter-spacing:.08em;font-size:16px}
+:root[data-skin="neon"] .modal-card{border-color:#FF3EA5;box-shadow:0 0 18px rgba(255,62,165,.35)}
+:root[data-skin="neon"] .modal-card h3{font-weight:400;color:#FF6CBE}
 .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(18px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--bg);border-radius:999px;padding:10px 10px 10px 16px;display:flex;gap:12px;align-items:center;font-size:14px;z-index:20;max-width:calc(100% - 32px)}
 .toast button{background:none;border:0;color:var(--bg);font-weight:700;text-decoration:underline;padding:2px 6px}
 .example-note{font-size:13px;padding:10px 12px;border-radius:var(--r);background:var(--dup-soft);color:var(--ink);margin-bottom:12px}
@@ -444,6 +458,7 @@ details.pick summary span{font-weight:400;color:var(--muted)}
 <body>
 <div id="app"></div>
 <div id="toast" class="toast" hidden></div>
+<div id="modal" class="modal" hidden></div>
 
 <script>
 (() => {
@@ -678,6 +693,26 @@ function curVar(col) {
   const ed = curEd(col); const vs = col.variants.filter(v => edStats(col, ed, v.id).total > 0); const list = vs.length ? vs : col.variants;
   return (list.find(v => v.id === S.varId) || list[0]).id;
 }
+
+/* ---------- confirmation window ---------- */
+let modalAct = null, modalFocus = null;
+function openModal(title, text, okLabel, act, id) {
+  modalAct = { act, id }; modalFocus = document.activeElement;
+  const m = $('#modal');
+  m.innerHTML = '<div class="modal-card" role="alertdialog" aria-modal="true" aria-labelledby="mTitle" aria-describedby="mText">' +
+    '<h3 id="mTitle">' + esc(title) + '</h3><p id="mText">' + esc(text) + '</p>' +
+    '<div class="modal-actions"><button class="btn ghost" type="button" data-act="mcancel">Cancel</button><button class="btn danger" type="button" data-act="mok">' + esc(okLabel) + '</button></div></div>';
+  m.hidden = false; m.querySelector('[data-act="mcancel"]').focus();
+}
+function closeModal() { const m = $('#modal'); m.hidden = true; m.innerHTML = ''; modalAct = null; try { modalFocus && modalFocus.focus(); } catch (e) {} }
+function runAct(act, id) { const f = document.createElement('button'); f.type = 'button'; f.hidden = true; f.dataset.act = act; if (id) f.dataset.id = id; document.body.appendChild(f); f.click(); f.remove(); }
+function askDelete(col, id) {
+  if (id === 'col') return openModal('Delete collection?', '“' + col.name + '” and everything you marked in it will be deleted.', 'Delete', 'delcol');
+  if (id.startsWith('e:')) { const e = col.editions.find(x => x.id === id.slice(2)); return openModal('Delete edition?', '“' + e.name + '” and everything you marked in it will be deleted.', 'Delete', 'deled', e.id); }
+  if (id.startsWith('v:')) { const v = col.variants.find(x => x.id === id.slice(2)); return openModal('Delete variant?', 'Everything marked as “' + v.name + '” will be removed from all editions.', 'Delete', 'delvar', v.id); }
+}
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && !$('#modal').hidden) closeModal(); });
+document.addEventListener('click', e => { if (e.target.id === 'modal') closeModal(); });
 
 let undoFn = null;
 function toast(msg, withUndo) {
@@ -1015,7 +1050,9 @@ document.addEventListener('click', e => {
     case 'copy': { const ta = document.getElementById(id); const t = ta.value;
       const fallback = () => { ta.focus(); ta.select(); toast('Text selected — copy it manually'); };
       try { navigator.clipboard.writeText(t).then(() => toast('Copied'), fallback); } catch (err) { fallback(); } break; }
-    case 'ask': S.confirm = id; render(); break;
+    case 'ask': askDelete(col, id); break;
+    case 'mok': { const m = modalAct; closeModal(); if (m) runAct(m.act, m.id); break; }
+    case 'mcancel': closeModal(); break;
     case 'cancel': S.confirm = null; render(); break;
     case 'undofn': { const f = undoFn; undoFn = null; $('#toast').hidden = true; if (f) f(); break; }
     case 'delcol': { const idx = S.cols.indexOf(col), copy = clone(col);
