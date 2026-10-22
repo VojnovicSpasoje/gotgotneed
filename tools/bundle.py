@@ -48,7 +48,7 @@ out = f'''<title>GotGotNeed</title>
 {script}
 </script>
 '''
-dest = sys.argv[1] if len(sys.argv) > 1 else os.path.join(ROOT, 'dist', 'gotgotneed-single.html')
+dest = os.path.abspath(sys.argv[1]) if len(sys.argv) > 1 else os.path.join(ROOT, 'dist', 'gotgotneed-single.html')
 os.makedirs(os.path.dirname(dest), exist_ok=True)
 open(dest, 'w').write(out)
 print('wrote', dest, len(out), 'bytes;', len(order), 'modules')
