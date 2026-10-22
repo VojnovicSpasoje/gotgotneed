@@ -24,9 +24,12 @@ function testCollections() {
   const e1 = nums.editions[0];
   [1, 2, 3, 5, 8, 13, 21, 34].forEach(k => setCnt(e1, String(k), reg, 1));
   setCnt(e1, '3', reg, 3); setCnt(e1, '8', reg, 2); setCnt(e1, '2', shiny, 1);
-  // By names: 12 names (two with a serial number), a few marked.
+  // By names: 40 names (long enough to show the letter strip), two with a serial number, a few marked.
   const v = uid();
-  const names = ['Messi', 'Ronaldo', 'Mbappé', 'Haaland', 'Modrić', 'Vlahović', 'Mitrović', 'Tadić', 'Pedri', 'Bellingham', 'Saka', 'Yamal'];
+  const names = ['Messi', 'Ronaldo', 'Mbappé', 'Haaland', 'Modrić', 'Vlahović', 'Mitrović', 'Tadić', 'Pedri', 'Bellingham', 'Saka', 'Yamal',
+    'Kane', 'Salah', 'De Bruyne', 'Lewandowski', 'Kimmich', 'Musiala', 'Wirtz', 'Rodri', 'Gavi', 'Vinícius', 'Rodrygo', 'Valverde',
+    'Griezmann', 'Dembélé', 'Kvaratskhelia', 'Osimhen', 'Lautaro', 'Álvarez', 'Foden', 'Rice', 'Ødegaard', 'Son', 'Neymar', 'Živković',
+    'Škriniar', 'Čolak', 'Đorđević', 'Milinković-Savić'];
   const list = { id: uid(), name: 'Test names ' + n, cat: 'Test', created: now + 1, updated: now + 1, order: order + 1,
     variants: [{ id: v, name: 'Standard' }],
     editions: [{ id: uid(), name: 'Players', mode: 'list', from: 1, to: 1, have: {},

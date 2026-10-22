@@ -61,7 +61,7 @@ export function viewHome() {
 
 registerView('home', viewHome, 0);
 onAct({
-  open: ({ id }) => { if (consumeSuppressOpen()) return; S.colId = id; S.edId = null; S.varId = null; S.q = ''; S.filter = 'all'; S.tab = 'album'; go('col'); },
+  open: ({ id }) => { if (consumeSuppressOpen()) return; S.colId = id; S.edId = null; S.varId = null; S.q = ''; S.letter = ''; S.filter = 'all'; S.tab = 'album'; go('col'); },
   new: () => { S.newMode = 'range'; go('new'); },
   hcat: ({ id }) => { S.homeCat = id; render(); },
   hclear: () => { S.homeQ = ''; S.homeCat = 'all'; render(); },
