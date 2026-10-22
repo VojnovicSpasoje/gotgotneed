@@ -12,6 +12,7 @@ import './views/edit.js';
 import './views/feedback.js';
 import './features/bulk.js';
 import './data/backup.js';
+import './features/devtools.js'; // TEMPORARY – testing helper, remove before release
 import { render, stateOf } from './core/nav.js';
 import { S } from './core/state.js';
 import { exampleCols } from './data/examples.js';

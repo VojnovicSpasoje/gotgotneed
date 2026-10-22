@@ -7,7 +7,10 @@ import { curCol } from '../data/select.js';
 export const views = {};
 export const DEPTH = { home: 0, col: 1, new: 1, edit: 2, settings: 1, feedback: 1 };
 export function registerView(name, fn, depth) { views[name] = fn; DEPTH[name] = depth; }
-export function render() { $('#app').innerHTML = (views[S.view] || views.home)(); }
+// Features that need to add something after a screen is drawn (e.g. temporary test tools).
+const renderHooks = [];
+export const onRender = fn => renderHooks.push(fn);
+export function render() { $('#app').innerHTML = (views[S.view] || views.home)(); for (const f of renderHooks) f(); }
 export const stateOf = v => ({ kol: 1, v, colId: S.colId, d: DEPTH[v] });
 export function show(v) { S.view = v; render(); scrollTo(0, 0); }
 export function go(v) { try { history.pushState(stateOf(v), ''); } catch (e) {} show(v); }
