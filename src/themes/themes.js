@@ -30,7 +30,14 @@ export function applySkin(id) {
   de.style.removeProperty('color-scheme');
   if (d.t) { for (const [k, v] of Object.entries(d.t)) de.style.setProperty('--' + k, v); de.style.setProperty('color-scheme', d.scheme); }
   de.setAttribute('data-skin', sk);
+  syncBars();
 }
+// Phone status bar (and, where Android allows, the navigation bar) take the theme's background colour.
+export function syncBars() {
+  const m = document.querySelector('meta[name="theme-color"]'); if (!m || !document.body) return;
+  const c = getComputedStyle(document.body).backgroundColor; if (c) m.setAttribute('content', c);
+}
+try { matchMedia('(prefers-color-scheme: dark)').addEventListener('change', syncBars); } catch (e) {}
 export function loadSkin() { try { return localStorage.getItem('kolekcionar.skin') || 'classic'; } catch (e) { return 'classic'; } }
 export function saveSkin() {
   try { localStorage.setItem('kolekcionar.skin', S.skin); } catch (e) {}
