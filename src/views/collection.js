@@ -49,7 +49,7 @@ export function heroHTML(col, ed, vid, cs, es) {
     (bn ? '<div><span class="label">★ Bonus</span><b class="num">' + bn.owned + '/' + bn.total + '</b></div>' : '') + '</div>';
 }
 // The search box only appears on longer editions; short ones are quicker to scan by eye.
-export const SEARCH_MIN = 40;
+export const SEARCH_MIN = 31;
 export const showSearch = (ed, vid) => itemsOf(ed).filter(it => inScope(ed, vid, it.k)).length >= SEARCH_MIN;
 export function visibleItems(ed, vid) {
   const q = showSearch(ed, vid) ? S.q.trim().toLowerCase() : '';
