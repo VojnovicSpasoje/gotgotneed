@@ -12,6 +12,7 @@ import './views/edit.js';
 import './views/feedback.js';
 import './features/bulk.js';
 import './data/backup.js';
+import { restoreFromCopy } from './features/safety.js';
 // TEMPORARY – testing helper, remove before release:
 import './features/devtools.js';
 import { render, stateOf } from './core/nav.js';
@@ -25,4 +26,5 @@ if (!S.cols.length) S.cols = exampleCols();
 applySkin(loadSkin());
 try { history.replaceState(stateOf('home'), ''); } catch (e) {}
 render();
+restoreFromCopy();
 initCaps();

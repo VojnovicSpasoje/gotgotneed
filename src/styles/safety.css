@@ -1,0 +1,5 @@
+/* Backup reminder on the home screen */
+.bknudge{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px 14px;padding:12px 14px;margin:0 0 14px;border:1px solid var(--line);border-left:4px solid var(--have);border-radius:var(--r);background:var(--surface);color:var(--ink)}
+.bk-txt{display:flex;flex-direction:column;gap:2px;min-width:0;flex:1 1 220px;font-size:14px}
+.bk-txt span{color:var(--muted);font-size:13px}
+.bk-act{display:flex;align-items:center;gap:14px}

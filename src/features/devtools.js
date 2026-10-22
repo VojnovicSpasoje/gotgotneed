@@ -15,7 +15,8 @@ onRender(() => {
 });
 
 function testCollections() {
-  const n = S.cols.filter(c => c.cat === 'Test').length / 2 + 1, now = Date.now(), order = S.cols.filter(c => !c.example).length;
+  // Dated 20 days back so the backup reminder shows up right away.
+  const n = S.cols.filter(c => c.cat === 'Test').length / 2 + 1, now = Date.now() - 20 * 864e5, order = S.cols.filter(c => !c.example).length;
   // By numbers: 1–50, Regular + Shiny (Shiny exists only for 1–10), some marked, a few duplicates.
   const reg = uid(), shiny = uid();
   const nums = { id: uid(), name: 'Test numbers ' + n, cat: 'Test', created: now, updated: now, order,

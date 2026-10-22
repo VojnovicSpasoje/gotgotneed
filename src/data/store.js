@@ -5,8 +5,15 @@ import { $ } from '../core/util.js';
 import { curCol } from './select.js';
 import { SKINS, SKIN_ALIAS, applySkin } from '../themes/themes.js';
 
+// Other modules (e.g. the safety copy in IndexedDB) can listen for every save.
+const saveHooks = [];
+export const onSave = fn => saveHooks.push(fn);
 export function loadLocal() { try { const r = localStorage.getItem(LS); if (r) { const d = JSON.parse(r); if (d && Array.isArray(d.cols)) return d.cols; } } catch (e) {} return []; }
-export function saveLocal() { try { localStorage.setItem(LS, JSON.stringify({ cols: S.cols.filter(c => !c.example) })); } catch (e) {} }
+export function saveLocal() {
+  const cols = S.cols.filter(c => !c.example);
+  try { localStorage.setItem(LS, JSON.stringify({ cols, saved: Date.now() })); } catch (e) {}
+  for (const f of saveHooks) { try { f(cols); } catch (e) {} }
+}
 export function syncHTML() {
   const txt = S.sync === 'cloud' ? 'Saved to your account' : S.sync === 'error' ? 'Could not save' : 'This device only';
   return '<span id="sync" class="sync ' + S.sync + '"><i></i>' + txt + '</span>';

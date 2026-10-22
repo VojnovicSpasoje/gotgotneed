@@ -27,7 +27,7 @@ src/
     examples.js       example collections for first-time users
   ui/                 toast (messages + Undo), modal (confirmation window)
   views/              one file per screen: home, collection, new, edit, feedback (+ drag to reorder)
-  features/           bigger add-ons, e.g. bulk.js (“Add many”)
+  features/           bigger add-ons: bulk.js (“Add many”), safety.js (persistent storage, IndexedDB safety copy, backup reminder)
   themes/             themes.js (colors, fonts, picker) + one CSS file per theme
   styles/             reset, design tokens, shared components, feature styles
   pwa/                offline support and the “Install” bar (website only)
