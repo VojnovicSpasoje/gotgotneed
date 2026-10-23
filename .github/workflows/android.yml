@@ -20,7 +20,7 @@ jobs:
       - uses: actions/setup-java@v5
         with: { distribution: temurin, java-version: 21 }
       - name: Install (locked versions once package-lock.json exists)
-        run: npm ci || bash tools/android/ci-step.sh npm install   # npm install only when package.json gained a new package
+        run: bash tools/android/ci-step.sh npm install --no-audit --no-fund   # respects package-lock.json; updates it (and it gets committed) only when package.json changed
       - name: Security audit of app dependencies
         run: bash tools/android/ci-step.sh npm audit --omit=dev --audit-level=high
       - name: Unit tests
