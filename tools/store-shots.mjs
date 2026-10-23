@@ -12,7 +12,7 @@ const page = await ctx.newPage();
 
 async function fresh(skin) {
   await page.goto(SITE);
-  await page.evaluate(s => { localStorage.clear(); localStorage.setItem('kolekcionar.skin', s); localStorage.setItem('ggn.installDismissed', '1'); }, skin);
+  await page.evaluate(s => { localStorage.clear(); localStorage.setItem('kolekcionar.skin', s); localStorage.setItem('ggn.installDismissed', '1'); localStorage.setItem('ggn.introSeen', '1'); }, skin);
   await page.reload({ waitUntil: 'networkidle' });
   await page.evaluate(() => document.fonts.ready);
   await page.waitForTimeout(600);

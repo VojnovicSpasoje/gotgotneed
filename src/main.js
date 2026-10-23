@@ -11,6 +11,7 @@ import './views/new.js';
 import './views/edit.js';
 import './views/feedback.js';
 import './views/settings.js';
+import './features/intro.js';
 import './features/bulk.js';
 import './features/trade.js';
 import './data/backup.js';

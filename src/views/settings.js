@@ -30,7 +30,7 @@ export function viewSettings() {
     '<div id="exportOut"></div>' +
     (G.DB ? '' : '<label class="setswitch"><span>Remind me to back up</span><input type="checkbox" id="bkRemind"' + (b.off ? '' : ' checked') + '><i aria-hidden="true"></i></label>') +
     '</div></section>';
-  h += '<section class="setsec"><h2>Help</h2><div class="setbox">' + row('fb', 'Send feedback', '') +
+  h += '<section class="setsec"><h2>Help</h2><div class="setbox">' + row('intro', 'How it works', '') + row('fb', 'Send feedback', '') +
     '<a class="setrow" href="https://vojnovicspasoje.github.io/gotgotneed/privacy.html" target="_blank" rel="noopener"><span>Privacy policy</span><span class="setval">↗</span></a></div></section>';
   h += '<section class="setsec"><h2>About</h2><div class="setbox setpad about">' +
     '<p><b>GotGotNeed</b> <span class="muted">version ' + APP_VERSION + (APP_BUILD ? ' (build ' + APP_BUILD + ')' : '') + '</span></p>' +

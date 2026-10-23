@@ -32,7 +32,7 @@ const X = [
     await p.evaluate(() => { window.__x = 0; });
   };
   const fill = (sel, v) => p.fill(sel, v);
-  await p.goto(URL); await p.waitForTimeout(500);
+  await p.goto(URL); await p.evaluate(() => localStorage.setItem('ggn.introSeen', '1')); await p.reload(); await p.waitForTimeout(500);
 
   // 1. New collection by names, with variants – every field gets hostile text
   await p.click('[data-act="new"]');

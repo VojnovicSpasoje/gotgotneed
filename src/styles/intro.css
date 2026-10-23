@@ -1,0 +1,25 @@
+/* First-start intro */
+.intro{position:fixed;inset:0;z-index:50;background:var(--bg);display:grid;place-items:center;padding:24px max(18px,env(safe-area-inset-right,0px)) max(24px,env(safe-area-inset-bottom,0px)) max(18px,env(safe-area-inset-left,0px))}
+.intro-card{width:100%;max-width:400px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:14px;position:relative;padding-top:36px}
+.intro-skip{position:absolute;top:0;right:0;font-size:15px;color:var(--muted)}
+.intro-art{width:100%;max-width:300px;aspect-ratio:160/110;margin-bottom:6px}
+.intro-art svg{width:100%;height:100%}
+.intro h2{font-size:26px;line-height:1.15;margin:0}
+.intro p{margin:0;color:var(--muted);font-size:16px;line-height:1.5;max-width:34ch}
+.intro-dots{display:flex;gap:8px;margin:8px 0}
+.intro-dots i{width:8px;height:8px;border-radius:50%;background:var(--line)}
+.intro-dots i.on{background:var(--ink);width:22px;border-radius:4px}
+.intro-nav{display:flex;justify-content:space-between;align-items:center;width:100%;margin-top:6px}
+.intro-nav .btn.ghost{width:48px;height:44px;padding:0}
+.intro-nav .btn.ghost svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.intro-nav .btn:not(.ghost){min-width:150px}
+/* illustration parts take the theme's colours */
+.ia-on{fill:var(--have)}.ia-off{fill:var(--surface);stroke:var(--muted);stroke-width:2;stroke-dasharray:5 4}
+.ia-ck{fill:none;stroke:var(--have-ink,#fff);stroke-width:5;stroke-linecap:round;stroke-linejoin:round}
+.ia-q,.ia-m{fill:var(--muted);font:800 22px system-ui;text-anchor:middle}
+.ia-n{fill:var(--have-ink,#fff);font:800 18px system-ui;text-anchor:middle}
+.ia-bar{fill:var(--sunk)}.ia-dup,.ia-dup2{fill:var(--dup)}.ia-x{fill:#fff;font:800 9px system-ui;text-anchor:middle}
+.ia-pill{fill:var(--ink)}.ia-t{fill:var(--bg);font:700 11px system-ui;text-anchor:middle}
+.ia-pill2{fill:var(--sunk)}.ia-t2{fill:var(--ink);font:700 11px system-ui;text-anchor:middle}
+.ia-phone{fill:var(--surface);stroke:var(--line);stroke-width:2}.ia-qr{fill:#fff;stroke:var(--line)}.ia-qrd{fill:#111}
+.ia-arrow{fill:none;stroke:var(--have);stroke-width:4;stroke-linecap:round;stroke-linejoin:round}

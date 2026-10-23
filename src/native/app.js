@@ -2,6 +2,7 @@
 import { onRender, show } from '../core/nav.js';
 import { S } from '../core/state.js';
 import { closeModal } from '../ui/modal.js';
+import { closeIntro, introOpen } from '../features/intro.js';
 import { $, isNativeApp, nativePlugin } from '../core/util.js';
 import { setExportHandler } from '../data/backup.js';
 import { toast } from '../ui/toast.js';
@@ -27,6 +28,7 @@ if (isNativeApp()) {
   // screen send the app to the background (like other Android apps).
   const app = nativePlugin('App');
   if (app) app.addListener('backButton', () => {
+    if (introOpen()) { closeIntro(); return; }
     const m = $('#modal');
     if (m && !m.hidden) { closeModal(); return; }
     if (S.view === 'home') { app.minimizeApp().catch(() => app.exitApp()); return; }
