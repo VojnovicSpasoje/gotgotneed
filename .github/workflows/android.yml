@@ -20,9 +20,9 @@ jobs:
       - uses: actions/setup-java@v5
         with: { distribution: temurin, java-version: 21 }
       - name: Install (locked versions once package-lock.json exists)
-        run: if [ -f package-lock.json ]; then tools/android/ci-step.sh npm ci; else tools/android/ci-step.sh npm install; fi
+        run: if [ -f package-lock.json ]; then bash tools/android/ci-step.sh npm ci; else bash tools/android/ci-step.sh npm install; fi
       - name: Security audit of app dependencies
-        run: tools/android/ci-step.sh npm audit --omit=dev --audit-level=high
+        run: bash tools/android/ci-step.sh npm audit --omit=dev --audit-level=high
       - name: Unit tests
         run: npm test
       - name: Web part for the app
@@ -32,13 +32,13 @@ jobs:
           GGN_VERSION_CODE: ${{ github.run_number }}
           GGN_VERSION_NAME: '1.0'
         run: |
-          S=tools/android/ci-step.sh
+          S="bash tools/android/ci-step.sh"
           $S npx cap add android
           $S npx --yes @capacitor/assets@3 generate --android --iconBackgroundColor '#F4EEDF' --iconBackgroundColorDark '#F4EEDF' --splashBackgroundColor '#F4EEDF' --splashBackgroundColorDark '#0E131B'
           $S python3 tools/android/patch.py
           $S npx cap sync android
       - name: Build test APK (includes test tools)
-        run: cd android && ../tools/android/ci-step.sh ./gradlew --no-daemon assembleRelease
+        run: cd android && bash ../tools/android/ci-step.sh ./gradlew --no-daemon assembleRelease
       - run: mkdir -p out && cp android/app/build/outputs/apk/release/*.apk out/GotGotNeed-test.apk
       - name: Build Play bundle (AAB, no test tools)
         if: ${{ env.HAS_KEY == 'true' }}
