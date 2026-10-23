@@ -17,8 +17,6 @@ import './features/trade.js';
 import './data/backup.js';
 import './native/app.js';
 import { restoreFromCopy } from './features/safety.js';
-// TEMPORARY – testing helper, remove before release:
-import './features/devtools.js';
 import { render, stateOf } from './core/nav.js';
 import { S } from './core/state.js';
 import { exampleCols } from './data/examples.js';

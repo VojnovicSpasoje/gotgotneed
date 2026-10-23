@@ -4,7 +4,7 @@
 import { cpSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 
 const OUT = 'www';
-const RELEASE = process.argv.includes('--release');   // the Play build leaves out the test tools
+const RELEASE = process.argv.includes('--release');   // Play build (test tools were removed from the app; flag kept for future dev-only code)
 rmSync(OUT, { recursive: true, force: true }); mkdirSync(OUT);
 for (const d of ['src', 'fonts', 'icons']) cpSync(d, OUT + '/' + d, { recursive: true });
 rmSync(OUT + '/src/pwa', { recursive: true, force: true });
