@@ -28,4 +28,10 @@ if (RELEASE) {
   if (main.includes('devtools')) throw new Error('devtools import still in app main.js');
   writeFileSync(OUT + '/src/main.js', main);
 }
+const build = process.env.GGN_VERSION_CODE || '';
+if (build) {
+  const f = OUT + '/src/views/settings.js', js = readFileSync(f, 'utf8');
+  if (!js.includes("export const APP_BUILD = '';")) throw new Error('APP_BUILD placeholder missing');
+  writeFileSync(f, js.replace("export const APP_BUILD = '';", "export const APP_BUILD = '" + build.replace(/\D/g, '') + "';"));
+}
 console.log('www/ ready' + (RELEASE ? ' (release: no test tools)' : ' (test build)'));

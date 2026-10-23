@@ -26,6 +26,7 @@ jobs:
       - name: Unit tests
         run: npm test
       - name: Web part for the app
+        env: { GGN_VERSION_CODE: '${{ github.run_number }}' }
         run: node tools/build-app-web.mjs
       - name: Create and harden the Android project
         env:
@@ -46,7 +47,9 @@ jobs:
           export GGN_KEYSTORE="$GITHUB_WORKSPACE/tools/android/test-signing.p12" GGN_KEY_ALIAS=ggn-test
           export GGN_KEYSTORE_PASSWORD="$GGN_TEST_KEY_PASSWORD" GGN_KEY_PASSWORD="$GGN_TEST_KEY_PASSWORD"
           cd android && bash ../tools/android/ci-step.sh ./gradlew --no-daemon assembleRelease
-      - run: mkdir -p out && cp android/app/build/outputs/apk/release/*.apk out/GotGotNeed-test.apk
+      - run: |
+          mkdir -p out && cp android/app/build/outputs/apk/release/*.apk out/GotGotNeed-test.apk
+          "$ANDROID_HOME"/build-tools/*/apksigner verify --print-certs out/GotGotNeed-test.apk | grep -E "Signer #1 certificate (DN|SHA-256)" | tee out/signature.txt
       - name: Build Play bundle (AAB, no test tools)
         if: ${{ env.HAS_KEY == 'true' }}
         env:
@@ -57,7 +60,7 @@ jobs:
         run: |
           echo "$GGN_KEYSTORE_B64" | base64 -d > "$RUNNER_TEMP/upload.jks"
           export GGN_KEYSTORE="$RUNNER_TEMP/upload.jks"
-          node tools/build-app-web.mjs --release && npx cap copy android
+          GGN_VERSION_CODE=${{ github.run_number }} node tools/build-app-web.mjs --release && npx cap copy android
           cd android && ./gradlew --no-daemon bundleRelease && cp app/build/outputs/bundle/release/*.aab ../out/GotGotNeed-play.aab
           rm -f "$GGN_KEYSTORE"
       - uses: actions/upload-artifact@v4
