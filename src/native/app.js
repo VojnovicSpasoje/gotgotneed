@@ -11,10 +11,12 @@ if (isNativeApp()) {
   // (The bars themselves are see-through, so they show the theme's background.)
   let last = '';
   const syncBarStyle = () => {
-    const bars = nativePlugin('SystemBars'); if (!bars) return;
-    const m = getComputedStyle(document.body).backgroundColor.match(/\d+/g) || [255, 255, 255];
-    const lum = (0.299 * m[0] + 0.587 * m[1] + 0.114 * m[2]) / 255, style = lum < 0.5 ? 'DARK' : 'LIGHT';
-    if (style !== last) { last = style; bars.setStyle({ style }).catch(() => {}); }
+    const m = (getComputedStyle(document.body).backgroundColor.match(/\d+/g) || [255, 255, 255]).slice(0, 3).map(Number);
+    const hex = '#' + m.map(x => x.toString(16).padStart(2, '0')).join('');
+    if (hex === last) return; last = hex;
+    const lum = (0.299 * m[0] + 0.587 * m[1] + 0.114 * m[2]) / 255;
+    const bars = nativePlugin('SystemBars'); if (bars) bars.setStyle({ style: lum < 0.5 ? 'DARK' : 'LIGHT' }).catch(() => {});
+    const paint = nativePlugin('BarColor'); if (paint) paint.set({ color: hex }).catch(() => {});
   };
   onRender(syncBarStyle);
   try { matchMedia('(prefers-color-scheme: dark)').addEventListener('change', syncBarStyle); } catch (e) {}

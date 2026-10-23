@@ -66,6 +66,13 @@ pr += '''
 '''
 wr('app/proguard-rules.pro', pr)
 
+# 4. Our small native helper (bar colour) replaces the generated MainActivity.
+import glob, shutil
+acts = glob.glob(os.path.join(A, 'app/src/main/java/**/MainActivity.java'), recursive=True)
+need(len(acts) == 1 and acts[0].replace(os.sep, '/').endswith('app/gotgotneed/MainActivity.java'), 'find MainActivity in app/gotgotneed (found ' + str(acts) + ')')
+for f in ('MainActivity.java', 'BarColorPlugin.java'):
+    shutil.copy(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'java', f), os.path.dirname(acts[0]))
+
 v = rd('variables.gradle')
 t = re.search(r'targetSdkVersion\s*=\s*(\d+)', v)
 need(t and int(t.group(1)) >= 36, 'confirm targetSdkVersion >= 36 (found ' + (t.group(1) if t else '?') + ')')
