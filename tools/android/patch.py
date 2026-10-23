@@ -73,6 +73,14 @@ need(len(acts) == 1 and acts[0].replace(os.sep, '/').endswith('app/gotgotneed/Ma
 for f in ('MainActivity.java', 'BarColorPlugin.java', 'SaveFilePlugin.java'):
     shutil.copy(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'java', f), os.path.dirname(acts[0]))
 
+# 5. Launcher icon: our own adaptive icon (exact card size), replacing what the assets tool generated.
+res_src = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'res')
+for root, _, files in os.walk(res_src):
+    for f in files:
+        rel = os.path.relpath(os.path.join(root, f), res_src)
+        dst = os.path.join(A, 'app/src/main/res', rel); os.makedirs(os.path.dirname(dst), exist_ok=True)
+        shutil.copy(os.path.join(root, f), dst)
+
 v = rd('variables.gradle')
 t = re.search(r'targetSdkVersion\s*=\s*(\d+)', v)
 need(t and int(t.group(1)) >= 36, 'confirm targetSdkVersion >= 36 (found ' + (t.group(1) if t else '?') + ')')

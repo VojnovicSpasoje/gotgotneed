@@ -109,6 +109,11 @@ jobs:
             adb shell monkey -p app.gotgotneed -c android.intent.category.LAUNCHER 1
             sleep 15
             adb exec-out screencap -p > out/screen-dark.png
+            adb shell input keyevent KEYCODE_HOME
+            sleep 3
+            adb shell input swipe 540 1800 540 500 300
+            sleep 4
+            adb exec-out screencap -p > out/screen-launcher.png
             adb shell dumpsys package app.gotgotneed | grep -E "permission|targetSdk|versionName|versionCode|flags=" > out/package-info.txt || true
             adb logcat -d > out/logcat.txt
       - name: Check result
