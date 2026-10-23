@@ -38,7 +38,8 @@ script = '(() => {\n' + '\n\n'.join(js) + '\n})();'
 index = open(os.path.join(ROOT, 'index.html')).read()
 css_files = re.findall(r'<link rel="stylesheet" href="(src/[^"]+)">', index)
 css = '\n'.join(open(os.path.join(ROOT, f)).read() for f in css_files if 'pwa/' not in f)
-fonts = re.search(r'<link rel="stylesheet" href="https://fonts.googleapis.com[^>]+>', index).group(0)
+# The Claude preview may only load fonts from Google Fonts; the site and app use the self-hosted copy.
+fonts = '<link rel="stylesheet" href="' + open(os.path.join(ROOT, 'tools', 'fonts-url.txt')).read().strip().replace('&', '&amp;') + '">'
 out = f'''<title>GotGotNeed</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
