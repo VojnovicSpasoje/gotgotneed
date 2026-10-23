@@ -3,6 +3,7 @@ import { onRender, show } from '../core/nav.js';
 import { S } from '../core/state.js';
 import { closeModal } from '../ui/modal.js';
 import { closeIntro, introOpen } from '../features/intro.js';
+import { codeFromLink, openSwapCode } from '../features/trade.js';
 import { $, isNativeApp, nativePlugin } from '../core/util.js';
 import { setExportHandler } from '../data/backup.js';
 import { toast } from '../ui/toast.js';
@@ -36,6 +37,13 @@ if (isNativeApp()) {
     if (st && st.kol && st.d > 0 && history.length > 1) history.back();
     else show('home');
   });
+
+  // A friend's swap QR/link opened this app (Android App Links): show the swap screen.
+  if (app) {
+    const openLink = url => { const c = codeFromLink(url); if (c) { closeIntro(); closeModal(); openSwapCode(c); } };
+    app.addListener('appUrlOpen', e => openLink(e && e.url));
+    app.getLaunchUrl().then(r => { if (r && r.url) setTimeout(() => openLink(r.url), 0); }).catch(() => {});
+  }
 
   // Links to web pages (privacy policy, …) open in the phone's browser, never inside the app.
   document.addEventListener('click', e => {

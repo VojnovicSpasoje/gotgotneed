@@ -22,6 +22,18 @@ need('android.permission.INTERNET' in m, 'find INTERNET permission')
 m = re.sub(r'android:configChanges="([^"]*)"', lambda x: 'android:configChanges="' + (x.group(1) if 'density' in x.group(1) else x.group(1) + '|density') + '"', m, count=1)
 wr('app/src/main/AndroidManifest.xml', m)
 
+# App Links: GotGotNeed swap links (QR codes) open straight in the app when it's installed.
+need('android.intent.category.LAUNCHER' in m, 'find the launcher activity')
+m = re.sub(r'(<category android:name="android.intent.category.LAUNCHER"\s*/>\s*</intent-filter>)', r'''\1
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="https" android:host="vojnovicspasoje.github.io" android:pathPrefix="/gotgotneed" />
+            </intent-filter>''', m, count=1)
+need('autoVerify' in m, 'add the App Links intent filter')
+wr('app/src/main/AndroidManifest.xml', m)
+
 # 2. Network: encrypted connections only, trust only the phone's built-in certificates.
 wr('app/src/main/res/xml/network_security_config.xml', '''<?xml version="1.0" encoding="utf-8"?>
 <network-security-config>

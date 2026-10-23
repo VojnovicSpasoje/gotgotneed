@@ -44,12 +44,18 @@ function copyLink() {
 async function receive() {
   const h = location.hash; if (!h.startsWith('#t=')) return;
   try { history.replaceState(history.state, '', location.pathname + location.search); } catch (e) {}
-  const text = await decodeShare(h.slice(3)), fr = text && unpackEdition(text);
+  await openSwapCode(h.slice(3));
+}
+/** Show the swap screen for a share code (from the site's #t=… or, in the Android app, from an opened link). */
+export async function openSwapCode(code) {
+  const text = await decodeShare(code), fr = text && unpackEdition(text);
   if (!fr) { toast('This swap link is damaged or from a newer version of the app'); return; }
   const cands = candidates(S.cols, fr);
   S.swap = { fr, cands, pick: cands.length ? 0 : -1 };
   go('swap');
 }
+/** The share code inside a full GotGotNeed link, or '' if it isn't one. */
+export const codeFromLink = url => { const m = /#t=([A-Za-z0-9_-]+)$/.exec(String(url || '')); return m ? m[1] : ''; };
 
 const label = (mode, its) => mode === 'range' ? ranges(its.map(it => it.n)) : its.map(it => '• ' + it.name + (it.sn ? ' [' + it.sn + ']' : '')).join('\n');
 function resultHTML(c, mode) {
