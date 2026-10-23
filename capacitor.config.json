@@ -1,0 +1,12 @@
+{
+  "appId": "app.gotgotneed",
+  "appName": "GotGotNeed",
+  "webDir": "www",
+  "android": {
+    "allowMixedContent": false,
+    "webContentsDebuggingEnabled": false
+  },
+  "plugins": {
+    "SystemBars": { "insetsHandling": "native", "style": "DEFAULT" }
+  }
+}

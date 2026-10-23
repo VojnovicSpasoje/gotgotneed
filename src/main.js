@@ -14,6 +14,7 @@ import './views/settings.js';
 import './features/bulk.js';
 import './features/trade.js';
 import './data/backup.js';
+import './native/app.js';
 import { restoreFromCopy } from './features/safety.js';
 // TEMPORARY – testing helper, remove before release:
 import './features/devtools.js';

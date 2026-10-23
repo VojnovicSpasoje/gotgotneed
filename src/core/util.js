@@ -16,3 +16,7 @@ export const ICON = {
   check: '<svg viewBox="0 0 24 24"><path d="M5 12l5 5 9-10"/></svg>',
   palette: '<svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 100 18c1.1 0 1.6-.8 1.6-1.6 0-.5-.2-.8-.4-1.1-.3-.3-.4-.6-.4-1.1 0-.9.7-1.6 1.6-1.6H16a5 5 0 005-5c0-4.1-4-7.6-9-7.6z"/><circle cx="7.5" cy="11" r="1"/><circle cx="10" cy="7" r="1"/><circle cx="14.5" cy="7" r="1"/></svg>'
 };
+// True inside the Android/iOS app (Capacitor), false on the website and in the Claude preview.
+export const isNativeApp = () => !!(window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform());
+// A native plugin by name (only inside the app), e.g. nativePlugin('Share').
+export const nativePlugin = name => (isNativeApp() && window.Capacitor.Plugins && window.Capacitor.Plugins[name]) || null;

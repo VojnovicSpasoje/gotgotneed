@@ -17,8 +17,13 @@ export function backupJSON() { return JSON.stringify({ app: 'kolekcionar', versi
 export function showExportText(msg) {
   $('#exportOut').innerHTML = '<div class="box trade"><h3>' + esc(msg) + '<button class="btn small" type="button" data-act="copy" data-id="tExp">Copy</button></h3><textarea id="tExp" readonly>' + esc(backupJSON()) + '</textarea><span class="hint">Save this text as a .json file.</span></div>';
 }
+// The Android app saves the file its own way (share sheet); it registers itself here.
+let exportHandler = null;
+export const setExportHandler = fn => { exportHandler = fn; };
+export const backupFileName = () => 'gotgotneed-' + new Date().toISOString().slice(0, 10) + '.json';
 export async function doExport() {
   if (!S.cols.some(c => !c.example)) { toast('You have no collections of your own to export yet'); return; }
+  if (exportHandler) { try { if (await exportHandler(backupFileName(), backupJSON())) { markBackedUp(); return; } } catch (e) {} }
   if (G.DL) {
     try { await G.DL.save({ filename: 'gotgotneed-' + new Date().toISOString().slice(0, 10) + '.json', data: backupJSON() }); markBackedUp(); toast('File saved'); return; }
     catch (err) { if (err && err.code === 'declined') return; }

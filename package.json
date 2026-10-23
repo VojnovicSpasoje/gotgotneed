@@ -2,10 +2,24 @@
   "name": "gotgotneed",
   "private": true,
   "type": "module",
-  "description": "GotGotNeed – collection tracker (web app, no build step).",
+  "description": "GotGotNeed \u2013 collection tracker (web app, no build step).",
   "scripts": {
     "test": "node --test",
     "serve": "python3 -m http.server 8080",
-    "bundle": "python3 tools/bundle.py"
+    "bundle": "python3 tools/bundle.py",
+    "app:web": "node tools/build-app-web.mjs",
+    "app:web:release": "node tools/build-app-web.mjs --release"
+  },
+  "dependencies": {
+    "@capacitor/android": "^8.4.0",
+    "@capacitor/core": "^8.4.0",
+    "@capacitor/filesystem": "^8.0.0",
+    "@capacitor/share": "^8.0.0"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^8.4.0"
+  },
+  "engines": {
+    "node": ">=22"
   }
 }

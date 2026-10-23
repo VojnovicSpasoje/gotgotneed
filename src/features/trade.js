@@ -2,7 +2,7 @@
 import { onAct, onChange } from '../core/events.js';
 import { go, registerView, render, swap as replaceView } from '../core/nav.js';
 import { S } from '../core/state.js';
-import { $, ICON, esc, uid } from '../core/util.js';
+import { $, ICON, esc, isNativeApp, nativePlugin, uid } from '../core/util.js';
 import { ranges } from '../data/model.js';
 import { curCol, curEd } from '../data/select.js';
 import { SITE, candidates, compareEdition, decodeShare, encodeShare, packEdition, unpackEdition, NA } from '../data/share.js';
@@ -13,7 +13,7 @@ import { toast } from '../ui/toast.js';
 
 // Bigger QR codes get too dense to scan from a phone screen; past this, only the link is offered.
 export const QR_MAX_VERSION = 25;
-const shareBase = () => (window.claude || !/^https?:$/.test(location.protocol)) ? SITE : location.origin + location.pathname;
+const shareBase = () => (window.claude || isNativeApp() || !/^https?:$/.test(location.protocol)) ? SITE : location.origin + location.pathname;
 
 // ── Sharing ─────────────────────────────────────────────────────────────
 let shareURL = '';
@@ -30,7 +30,7 @@ async function openShare() {
     (q ? '<div class="qrbox">' + qrSVG(q, '#111', '#fff') + '</div><p class="hint" style="margin:0">Your friend scans this with the phone camera. GotGotNeed opens and shows what you can swap.</p>'
        : '<p class="hint" style="margin:0">This list is too big for a QR code. Send the link instead – it works the same way.</p>') +
     '<div class="modal-actions"><button class="btn ghost" type="button" data-act="mcancel">Close</button>' +
-    (navigator.share ? '<button class="btn ghost" type="button" data-act="shSend">Send…</button>' : '') +
+    (navigator.share || nativePlugin('Share') ? '<button class="btn ghost" type="button" data-act="shSend">Send…</button>' : '') +
     '<button class="btn" type="button" data-act="shCopy">Copy link</button></div></div>';
   m.hidden = false; m.querySelector('[data-act="shCopy"]').focus();
 }
@@ -101,7 +101,7 @@ registerView('swap', viewSwap, 1);
 onAct({
   share: () => { openShare(); },
   shCopy: () => copyLink(),
-  shSend: () => { navigator.share({ title: 'GotGotNeed swap', text: 'What can we swap? Open this in GotGotNeed:', url: shareURL }).catch(() => {}); },
+  shSend: () => { const d = { title: 'GotGotNeed swap', text: 'What can we swap? Open this in GotGotNeed:', url: shareURL }, sh = nativePlugin('Share'); (sh ? sh.share(d) : navigator.share(d)).catch(() => {}); },
   swStart: () => startCollection(),
 });
 onChange(e => { if (e.target.id === 'swPick') { S.swap.pick = +e.target.value; render(); return true; } });

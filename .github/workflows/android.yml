@@ -1,0 +1,98 @@
+name: Android app
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['src/**', 'index.html', 'fonts/**', 'icons/**', 'assets/**', 'capacitor.config.json', 'package.json', 'package-lock.json', 'tools/android/**', 'tools/build-app-web.mjs', '.github/workflows/android.yml']
+permissions:
+  contents: write
+concurrency: { group: android, cancel-in-progress: true }
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    env:
+      HAS_KEY: ${{ secrets.GGN_KEYSTORE_B64 != '' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - uses: actions/setup-java@v4
+        with: { distribution: temurin, java-version: 21 }
+      - name: Install (locked versions once package-lock.json exists)
+        run: if [ -f package-lock.json ]; then npm ci; else npm install; fi
+      - name: Security audit of app dependencies
+        run: npm audit --omit=dev --audit-level=high
+      - name: Unit tests
+        run: npm test
+      - name: Web part for the app
+        run: node tools/build-app-web.mjs
+      - name: Create and harden the Android project
+        env:
+          GGN_VERSION_CODE: ${{ github.run_number }}
+          GGN_VERSION_NAME: '1.0'
+        run: |
+          npx cap add android
+          npx --yes @capacitor/assets@3 generate --android --iconBackgroundColor '#F4EEDF' --iconBackgroundColorDark '#F4EEDF' --splashBackgroundColor '#F4EEDF' --splashBackgroundColorDark '#0E131B'
+          python3 tools/android/patch.py
+          npx cap sync android
+      - name: Build test APK (includes test tools)
+        run: cd android && ./gradlew --no-daemon assembleRelease
+      - run: mkdir -p out && cp android/app/build/outputs/apk/release/*.apk out/GotGotNeed-test.apk
+      - name: Build Play bundle (AAB, no test tools)
+        if: ${{ env.HAS_KEY == 'true' }}
+        env:
+          GGN_KEYSTORE_B64: ${{ secrets.GGN_KEYSTORE_B64 }}
+          GGN_KEYSTORE_PASSWORD: ${{ secrets.GGN_KEYSTORE_PASSWORD }}
+          GGN_KEY_ALIAS: ${{ secrets.GGN_KEY_ALIAS }}
+          GGN_KEY_PASSWORD: ${{ secrets.GGN_KEY_PASSWORD }}
+        run: |
+          echo "$GGN_KEYSTORE_B64" | base64 -d > "$RUNNER_TEMP/upload.jks"
+          export GGN_KEYSTORE="$RUNNER_TEMP/upload.jks"
+          node tools/build-app-web.mjs --release && npx cap copy android
+          cd android && ./gradlew --no-daemon bundleRelease && cp app/build/outputs/bundle/release/*.aab ../out/GotGotNeed-play.aab
+          rm -f "$GGN_KEYSTORE"
+      - uses: actions/upload-artifact@v4
+        with: { name: GotGotNeed-android, path: out/, retention-days: 30 }
+      - name: Save package-lock.json (pins exact versions)
+        run: |
+          if [ -n "$(git status --porcelain package-lock.json)" ]; then
+            git config user.name "github-actions[bot]"; git config user.email "github-actions[bot]@users.noreply.github.com"
+            git add package-lock.json && git commit -m "Pin Android app dependency versions" && git pull --rebase origin main && git push
+          fi
+
+  smoke-test:
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/download-artifact@v4
+        with: { name: GotGotNeed-android, path: out }
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules && sudo udevadm trigger --name-match=kvm
+      - name: Start the app on an emulator and look for crashes
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 34
+          arch: x86_64
+          target: google_apis
+          disable-animations: true
+          script: |
+            adb install -r out/GotGotNeed-test.apk
+            adb logcat -c
+            adb shell monkey -p app.gotgotneed -c android.intent.category.LAUNCHER 1
+            sleep 25
+            adb exec-out screencap -p > out/screen-home.png
+            adb shell dumpsys package app.gotgotneed | grep -E "permission|targetSdk|versionName" > out/package-info.txt || true
+            adb logcat -d > out/logcat.txt
+            adb shell pidof app.gotgotneed > out/pid.txt || echo "NOT RUNNING" > out/pid.txt
+      - name: Check result
+        run: |
+          cat out/pid.txt; grep -E "FATAL EXCEPTION|Capacitor/Console.*(Error|Uncaught)|Refused to" out/logcat.txt | head -40 || true
+          ! grep -q "NOT RUNNING" out/pid.txt
+          ! grep -q "FATAL EXCEPTION" out/logcat.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: { name: smoke-test, path: out/, retention-days: 14 }
