@@ -38,7 +38,14 @@ jobs:
           $S python3 tools/android/patch.py
           $S npx cap sync android
       - name: Build test APK (includes test tools)
-        run: cd android && bash ../tools/android/ci-step.sh ./gradlew --no-daemon assembleRelease
+        # Signed with a fixed TEST key kept in the repo, so each new test build installs over the previous one.
+        # It is not the Play key: Play builds are signed with the upload key from GitHub Secrets (below) and by Google.
+        env:
+          GGN_TEST_KEY_PASSWORD: 'fLwWfgGn1PMZyPGplF6LUN9l'
+        run: |
+          export GGN_KEYSTORE="$GITHUB_WORKSPACE/tools/android/test-signing.p12" GGN_KEY_ALIAS=ggn-test
+          export GGN_KEYSTORE_PASSWORD="$GGN_TEST_KEY_PASSWORD" GGN_KEY_PASSWORD="$GGN_TEST_KEY_PASSWORD"
+          cd android && bash ../tools/android/ci-step.sh ./gradlew --no-daemon assembleRelease
       - run: mkdir -p out && cp android/app/build/outputs/apk/release/*.apk out/GotGotNeed-test.apk
       - name: Build Play bundle (AAB, no test tools)
         if: ${{ env.HAS_KEY == 'true' }}
