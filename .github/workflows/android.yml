@@ -55,6 +55,12 @@ jobs:
           rm -f "$GGN_KEYSTORE"
       - uses: actions/upload-artifact@v4
         with: { name: GotGotNeed-android, path: out/, retention-days: 30 }
+      - name: Publish the test APK (GitHub release "test-build", for testers)
+        env: { GH_TOKEN: '${{ github.token }}' }
+        run: |
+          gh release delete test-build --yes --cleanup-tag || true
+          gh release create test-build out/GotGotNeed-test.apk --prerelease --title "Test build ${{ github.run_number }}" \
+            --notes "Test version of the GotGotNeed Android app (includes test tools). Not for Google Play." 
       - name: Save package-lock.json (pins exact versions)
         run: |
           if [ -n "$(git status --porcelain package-lock.json)" ]; then
@@ -65,6 +71,7 @@ jobs:
   smoke-test:
     needs: build
     runs-on: ubuntu-latest
+    permissions: { contents: write }
     timeout-minutes: 30
     steps:
       - uses: actions/download-artifact@v4
@@ -85,15 +92,26 @@ jobs:
             adb logcat -c
             adb shell monkey -p app.gotgotneed -c android.intent.category.LAUNCHER 1
             sleep 25
-            adb exec-out screencap -p > out/screen-home.png
-            adb shell dumpsys package app.gotgotneed | grep -E "permission|targetSdk|versionName" > out/package-info.txt || true
-            adb logcat -d > out/logcat.txt
+            adb exec-out screencap -p > out/screen-light.png
             adb shell pidof app.gotgotneed > out/pid.txt || echo "NOT RUNNING" > out/pid.txt
+            adb shell cmd uimode night yes
+            adb shell am force-stop app.gotgotneed
+            adb shell monkey -p app.gotgotneed -c android.intent.category.LAUNCHER 1
+            sleep 15
+            adb exec-out screencap -p > out/screen-dark.png
+            adb shell dumpsys package app.gotgotneed | grep -E "permission|targetSdk|versionName|versionCode|flags=" > out/package-info.txt || true
+            adb logcat -d > out/logcat.txt
       - name: Check result
         run: |
           cat out/pid.txt; grep -E "FATAL EXCEPTION|Capacitor/Console.*(Error|Uncaught)|Refused to" out/logcat.txt | head -40 || true
           ! grep -q "NOT RUNNING" out/pid.txt
           ! grep -q "FATAL EXCEPTION" out/logcat.txt
-      - uses: actions/upload-artifact@v4
+      - name: Keep screenshots and logs on the ci-results branch
         if: always()
-        with: { name: smoke-test, path: out/, retention-days: 14 }
+        run: |
+          mkdir -p r && cp out/*.png out/*.txt r/ 2>/dev/null || true
+          grep -E "Capacitor|chromium|AndroidRuntime|FATAL" out/logcat.txt | tail -400 > r/logcat-app.txt || true
+          rm -f r/logcat.txt
+          cd r && git init -q && git checkout -q -b ci-results && git add . \
+            && git -c user.name="github-actions[bot]" -c user.email="github-actions[bot]@users.noreply.github.com" commit -qm "Smoke test ${{ github.run_number }}" \
+            && git push -f "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" ci-results
