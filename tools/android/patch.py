@@ -23,13 +23,17 @@ m = re.sub(r'android:configChanges="([^"]*)"', lambda x: 'android:configChanges=
 wr('app/src/main/AndroidManifest.xml', m)
 
 # App Links: GotGotNeed swap links (QR codes) open straight in the app when it's installed.
+# Only the app's start address (swap links are SITE#t=…); other pages such as privacy.html must
+# still open in the browser, or the app would catch its own "Privacy policy" link.
 need('android.intent.category.LAUNCHER' in m, 'find the launcher activity')
 m = re.sub(r'(<category android:name="android.intent.category.LAUNCHER"\s*/>\s*</intent-filter>)', r'''\1
             <intent-filter android:autoVerify="true">
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="https" android:host="vojnovicspasoje.github.io" android:pathPrefix="/gotgotneed" />
+                <data android:scheme="https" android:host="vojnovicspasoje.github.io" />
+                <data android:path="/gotgotneed/" />
+                <data android:path="/gotgotneed" />
             </intent-filter>''', m, count=1)
 need('autoVerify' in m, 'add the App Links intent filter')
 wr('app/src/main/AndroidManifest.xml', m)

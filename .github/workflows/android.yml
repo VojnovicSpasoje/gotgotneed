@@ -113,6 +113,8 @@ jobs:
             sleep 6
             adb exec-out screencap -p > out/screen-swaplink.png
             adb shell pm get-app-links app.gotgotneed > out/app-links.txt 2>&1 || true
+            adb shell cmd package query-activities --brief -a android.intent.action.VIEW -c android.intent.category.BROWSABLE -p app.gotgotneed -d "https://vojnovicspasoje.github.io/gotgotneed/#t=abc" > out/links-swap.txt 2>&1 || true
+            adb shell cmd package query-activities --brief -a android.intent.action.VIEW -c android.intent.category.BROWSABLE -p app.gotgotneed -d "https://vojnovicspasoje.github.io/gotgotneed/privacy.html" > out/links-privacy.txt 2>&1 || true
             adb shell input keyevent KEYCODE_HOME
             sleep 3
             adb shell input swipe 540 1800 540 500 300
@@ -125,6 +127,9 @@ jobs:
           cat out/pid.txt; grep -E "FATAL EXCEPTION|Capacitor/Console.*(Error|Uncaught)|Refused to" out/logcat.txt | head -40 || true
           ! grep -q "NOT RUNNING" out/pid.txt
           ! grep -q "FATAL EXCEPTION" out/logcat.txt
+          echo "swap link:"; cat out/links-swap.txt; echo "privacy page:"; cat out/links-privacy.txt
+          grep -q "MainActivity" out/links-swap.txt          # swap links open the app
+          ! grep -q "MainActivity" out/links-privacy.txt     # other pages (privacy policy) open in the browser
       - name: Keep screenshots and logs on the ci-results branch
         if: always()
         run: |
