@@ -34,7 +34,7 @@ jobs:
         run: |
           S="bash tools/android/ci-step.sh"
           $S npx cap add android
-          $S npx --yes @capacitor/assets@3 generate --android --iconBackgroundColor '#F4EEDF' --iconBackgroundColorDark '#F4EEDF' --splashBackgroundColor '#F4EEDF' --splashBackgroundColorDark '#0E131B'
+          $S npx --yes @capacitor/assets@3 generate --android --iconBackgroundColor '#FFFFFF' --iconBackgroundColorDark '#FFFFFF' --splashBackgroundColor '#FFFFFF' --splashBackgroundColorDark '#0E131B'
           $S python3 tools/android/patch.py
           $S npx cap sync android
       - name: Build test APK (includes test tools)
