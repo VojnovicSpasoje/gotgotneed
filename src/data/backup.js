@@ -20,7 +20,9 @@ export function showExportText(msg) {
 // The Android app saves the file its own way (share sheet); it registers itself here.
 let exportHandler = null;
 export const setExportHandler = fn => { exportHandler = fn; };
-export const backupFileName = () => 'gotgotneed-' + new Date().toISOString().slice(0, 10) + '.json';
+// e.g. gotgotneed-2026-10-23_15-04.json – local date and time, so several backups a day don't mix up.
+export const backupFileName = (d = new Date()) => { const p = n => String(n).padStart(2, '0');
+  return 'gotgotneed-' + d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate()) + '_' + p(d.getHours()) + '-' + p(d.getMinutes()) + '.json'; };
 export async function doExport() {
   if (!S.cols.some(c => !c.example)) { toast('You have no collections of your own to export yet'); return; }
   if (exportHandler) {   // true = saved, false = not available here (use the web way), anything else = cancelled/failed
@@ -29,13 +31,13 @@ export async function doExport() {
     if (r !== false) return;
   }
   if (G.DL) {
-    try { await G.DL.save({ filename: 'gotgotneed-' + new Date().toISOString().slice(0, 10) + '.json', data: backupJSON() }); markBackedUp(); toast('File saved'); return; }
+    try { await G.DL.save({ filename: backupFileName(), data: backupJSON() }); markBackedUp(); toast('File saved'); return; }
     catch (err) { if (err && err.code === 'declined') return; }
   }
   if (!window.claude) {
     try {
       const url = URL.createObjectURL(new Blob([backupJSON()], { type: 'application/json' }));
-      const a = document.createElement('a'); a.href = url; a.download = 'gotgotneed-' + new Date().toISOString().slice(0, 10) + '.json';
+      const a = document.createElement('a'); a.href = url; a.download = backupFileName();
       document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 2000); markBackedUp(); toast('File saved'); return;
     } catch (e) {}
   }
