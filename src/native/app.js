@@ -1,6 +1,8 @@
 // Things that only matter inside the Android app (Capacitor). On the website this module does nothing.
-import { onRender } from '../core/nav.js';
-import { isNativeApp, nativePlugin } from '../core/util.js';
+import { onRender, show } from '../core/nav.js';
+import { S } from '../core/state.js';
+import { closeModal } from '../ui/modal.js';
+import { $, isNativeApp, nativePlugin } from '../core/util.js';
 import { setExportHandler } from '../data/backup.js';
 import { toast } from '../ui/toast.js';
 
@@ -20,6 +22,18 @@ if (isNativeApp()) {
   };
   onRender(syncBarStyle);
   try { matchMedia('(prefers-color-scheme: dark)').addEventListener('change', syncBarStyle); } catch (e) {}
+
+  // Android back button: close an open window first, then go back a screen, and on the home
+  // screen send the app to the background (like other Android apps).
+  const app = nativePlugin('App');
+  if (app) app.addListener('backButton', () => {
+    const m = $('#modal');
+    if (m && !m.hidden) { closeModal(); return; }
+    if (S.view === 'home') { app.minimizeApp().catch(() => app.exitApp()); return; }
+    let st = null; try { st = history.state; } catch (e) {}
+    if (st && st.kol && st.d > 0 && history.length > 1) history.back();
+    else show('home');
+  });
 
   // Links to web pages (privacy policy, …) open in the phone's browser, never inside the app.
   document.addEventListener('click', e => {
