@@ -1,6 +1,6 @@
-dist/
+/dist/
 node_modules/
-www/
-android/
+/www/
+/android/
 *.keystore
 *.jks
