@@ -67,8 +67,8 @@ function resultHTML(c, mode) {
     if (!p.vid) return head + '<p class="hint">Not compared – you don’t have the variant “' + esc(p.name) + '”.</p>';
     const n = Math.min(p.get.length, p.give.length);
     return head + (n ? '<div class="swapsum">You can swap <b>' + n + ' for ' + n + '</b></div>' : '') +
-      box('sg' + i, 'You get', p.get, 'Your friend has no spares that you’re missing.') +
-      box('sv' + i, 'You give', p.give, 'You have no spares that your friend is missing.');
+      box('sg' + i, 'You could get', p.get, 'Your friend has no spares that you’re missing.') +
+      box('sv' + i, 'You could give', p.give, 'You have no spares that your friend is missing.');
   }).join('');
 }
 function viewSwap() {
