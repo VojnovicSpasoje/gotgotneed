@@ -1,7 +1,7 @@
 name: Tests
 on:
   push:
-    paths: ['src/**', 'tests/**', '.github/workflows/test.yml']
+    paths: ['src/**', 'tests/**', 'index.html', 'tools/fuzz-inputs.cjs', '.github/workflows/test.yml']
   pull_request:
 jobs:
   test:
@@ -9,5 +9,15 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
-        with: { node-version: 20 }
+        with: { node-version: 22 }
       - run: npm test
+  security:
+    # Types hostile text (HTML/JS, formulas, huge input, odd numbers) into every field, imports a crafted
+    # backup file and opens crafted swap links; fails if any code runs, the page breaks or a JS error appears.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - run: npm i --no-save playwright@1.47.2 && npx playwright install --with-deps chromium
+      - run: (python3 -m http.server 8080 >/dev/null 2>&1 &) && sleep 1 && node tools/fuzz-inputs.cjs http://localhost:8080/

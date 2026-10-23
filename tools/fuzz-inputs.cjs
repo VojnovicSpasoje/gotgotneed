@@ -107,5 +107,6 @@ const X = [
   // own share link back
   await p.goto('about:blank'); await p.goto(shareUrl); await p.waitForTimeout(600); await check('own share link');
   console.log('\n' + (problems.length ? problems.join('\n') : 'NO PROBLEMS FOUND'));
+  process.exitCode = problems.length ? 1 : 0;
   await b.close();
 })();
