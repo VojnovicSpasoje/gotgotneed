@@ -41,12 +41,11 @@ if (isNativeApp()) {
     e.preventDefault(); window.location.href = a.href;   // the app hands non-app addresses to the browser
   }, true);
 
-  // Export: write the backup to a file and open the share sheet (save to Files / Drive, send, …).
+  // Export: saved like a normal download, straight into the phone's Downloads folder.
   setExportHandler(async (name, json) => {
-    const fs = nativePlugin('Filesystem'), share = nativePlugin('Share'); if (!fs || !share) return false;
-    const { uri } = await fs.writeFile({ path: name, data: json, directory: 'CACHE', encoding: 'utf8' });
-    try { await share.share({ title: 'GotGotNeed backup', files: [uri] }); } catch (e) { return false; }   // closed without choosing
-    toast('Backup ready – keep the file somewhere safe');
-    return true;
+    const saver = nativePlugin('SaveFile'); if (!saver) return false;
+    try { const r = await saver.save({ name, data: json }); toast(r && r.where === 'Downloads' ? 'Saved to Downloads: ' + name : 'Backup saved'); return true; }
+    catch (e) { if (/cancel/i.test(String(e && e.message))) return 'cancelled'; toast('Could not save the file'); return 'failed'; }
   });
+
 }

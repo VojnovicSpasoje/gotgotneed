@@ -23,7 +23,11 @@ export const setExportHandler = fn => { exportHandler = fn; };
 export const backupFileName = () => 'gotgotneed-' + new Date().toISOString().slice(0, 10) + '.json';
 export async function doExport() {
   if (!S.cols.some(c => !c.example)) { toast('You have no collections of your own to export yet'); return; }
-  if (exportHandler) { try { if (await exportHandler(backupFileName(), backupJSON())) { markBackedUp(); return; } } catch (e) {} }
+  if (exportHandler) {   // true = saved, false = not available here (use the web way), anything else = cancelled/failed
+    let r = false; try { r = await exportHandler(backupFileName(), backupJSON()); } catch (e) { r = 'failed'; }
+    if (r === true) markBackedUp();
+    if (r !== false) return;
+  }
   if (G.DL) {
     try { await G.DL.save({ filename: 'gotgotneed-' + new Date().toISOString().slice(0, 10) + '.json', data: backupJSON() }); markBackedUp(); toast('File saved'); return; }
     catch (err) { if (err && err.code === 'declined') return; }
