@@ -10,8 +10,8 @@ import { SKINS } from '../themes/themes.js';
 export const APP_VERSION = '1.0';
 // Filled in by tools/build-app-web.mjs for the Android app (build number shown in About).
 export const APP_BUILD = '';
-// Shown in About. Placeholder until the studio has a name.
-export const STUDIO = 'an independent developer from Serbia';
+// The studio behind the app (shown in About).
+export const STUDIO = 'Pocket Oak';
 
 const ONE_DAY = 864e5;
 const agoText = t => { const d = Math.floor((Date.now() - t) / ONE_DAY); return d <= 0 ? 'today' : d === 1 ? 'yesterday' : d + ' days ago'; };
@@ -35,7 +35,8 @@ export function viewSettings() {
   h += '<section class="setsec"><h2>About</h2><div class="setbox setpad about">' +
     '<p><b>GotGotNeed</b> <span class="muted">version ' + APP_VERSION + (APP_BUILD ? ' (build ' + APP_BUILD + ')' : '') + '</span></p>' +
     '<p>GotGotNeed started from a personal need: keeping track of my own collections – what I have, what I’m missing and what I can swap – without paper lists and spreadsheets. It works for any collection: sticker albums, cards, coins, magazines and more.</p>' +
-    '<p class="muted">Made by ' + esc(STUDIO) + '. No account needed – your collections stay on your phone.</p>' +
+    '<p class="muted">No account needed – your collections stay on your phone.</p>' +
+    '<p class="studio">' + ICON.oak + '<span>Made by <b>' + esc(STUDIO) + '</b><small>independent studio from Serbia</small></span></p>' +
     '<p class="muted">Questions or ideas? Use <button class="linkbtn" type="button" data-act="fb">Send feedback</button>.</p></div></section>';
   return h;
 }
