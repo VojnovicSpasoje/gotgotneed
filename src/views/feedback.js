@@ -19,7 +19,7 @@ function sendLimit() {
 }
 const noteSent = () => { try { localStorage.setItem(FB_LOG, JSON.stringify([...sentLog(), Date.now()])); } catch (e) {} };
 
-export const FB_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSea40DArCVmv6iyeKB77mWZiNpS2U_73EJ3kQJKYhLHkSh1jQ/formResponse';
+export const FB_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSdKs17ksEkot1W_kAckmXo7_XuJTrY3a-wzRyguyp17yknphA/formResponse';
 export function viewFeedback() {
   let h = '<header class="top"><button class="iconbtn" type="button" data-act="toSettings" aria-label="Back">' + ICON.back + '</button><h1>Send feedback</h1></header>';
   if (S.fbSent) return h + '<div class="box" style="text-align:center;align-items:center"><h3 style="font-size:22px">Thank you!</h3><p class="muted" style="margin:0">Your message was sent. We read every one.</p><button class="btn" type="button" data-act="home">Back to collections</button></div>';
@@ -49,8 +49,8 @@ onSubmit({
     if (wait) { err(wait); return; }
     if (window.claude) { err('Sending isn’t available inside Claude. Open the app at vojnovicspasoje.github.io/gotgotneed to send feedback.'); return; }
     const btn = $('#fbSend'); btn.disabled = true; btn.textContent = 'Sending…';
-    const body = new URLSearchParams({ 'entry.960602004': ['Idea', 'Bug', 'Other'].includes(S.fbType) ? S.fbType : 'Other', 'entry.1848165584': noFormula(msg) });
-    if (email) body.append('entry.774501519', noFormula(email));
+    const body = new URLSearchParams({ 'entry.1635371522': ['Idea', 'Bug', 'Other'].includes(S.fbType) ? S.fbType : 'Other', 'entry.203923111': noFormula(msg) });
+    if (email) body.append('entry.26631883', noFormula(email));
     fetch(FB_URL, { method: 'POST', mode: 'no-cors', body })
       .then(() => { noteSent(); S.fbSent = true; render(); scrollTo(0, 0); })
       .catch(() => { btn.disabled = false; btn.textContent = 'Send'; err('Could not send. Check your internet connection and try again.'); });
