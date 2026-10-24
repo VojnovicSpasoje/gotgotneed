@@ -30,8 +30,8 @@ export function viewFeedback() {
     '<label class="hp" aria-hidden="true">Website <input id="fbSite" tabindex="-1" autocomplete="off"></label>' +
     '<p id="fbErr" class="hint" style="color:var(--danger);margin:0" hidden></p>' +
     '<button class="btn block" type="submit" id="fbSend">Send</button>' +
-    (window.claude ? '<p class="hint" style="margin:0">Sending works in the GotGotNeed app at <a href="https://vojnovicspasoje.github.io/gotgotneed/" target="_blank" rel="noopener">vojnovicspasoje.github.io/gotgotneed</a>.</p>' : '') +
-    '<p class="hint" style="margin:0">Your message goes to the GotGotNeed team. See the <a href="https://vojnovicspasoje.github.io/gotgotneed/privacy.html" target="_blank" rel="noopener">privacy policy</a>.</p></form>';
+    (window.claude ? '<p class="hint" style="margin:0">Sending works in the GotGotNeed app at <a class="inlink" href="https://vojnovicspasoje.github.io/gotgotneed/" target="_blank" rel="noopener">vojnovicspasoje.github.io/gotgotneed</a>.</p>' : '') +
+    '<p class="hint" style="margin:0">Your message goes to the GotGotNeed team. See the <a class="inlink" href="https://vojnovicspasoje.github.io/gotgotneed/privacy.html" target="_blank" rel="noopener">privacy policy</a>.</p></form>';
 }
 
 registerView('feedback', viewFeedback, 2);

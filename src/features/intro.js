@@ -24,7 +24,7 @@ function draw() {
   const s = SLIDES[at], last = at === SLIDES.length - 1;
   const el = document.getElementById('intro');
   el.innerHTML = '<div class="intro-card" role="dialog" aria-modal="true" aria-labelledby="introT">' +
-    '<button class="intro-skip linkbtn" type="button" data-act="introDone">' + (last ? '' : 'Skip') + '</button>' +
+    (last ? '' : '<button class="intro-skip linkbtn" type="button" data-act="introDone">Skip</button>') +
     '<div class="intro-art">' + ART[s.art] + '</div>' +
     '<h2 id="introT">' + s.title + '</h2><p>' + s.text + '</p>' +
     '<div class="intro-dots" aria-hidden="true">' + SLIDES.map((_, i) => '<i' + (i === at ? ' class="on"' : '') + '></i>').join('') + '</div>' +

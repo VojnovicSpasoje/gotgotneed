@@ -50,7 +50,7 @@ export function skinPreview(id) {
 }
 export function viewSkins() {
   return '<header class="top"><button class="iconbtn" type="button" data-act="toSettings" aria-label="Back">' + ICON.back + '</button><h1>Themes</h1></header>' +
-    '<p class="hint" style="margin:0 0 14px">Pick a look. It applies right away and is saved to your account.</p>' +
+    '<p class="hint" style="margin:0 0 14px">Pick a look. It applies right away and is saved on this phone.</p>' +
     '<div class="skins">' + Object.keys(SKINS).map(id => { const d = SKINS[id];
       return '<button class="skin" type="button" data-act="skin" data-id="' + id + '" aria-pressed="' + (S.skin === id) + '">' + skinPreview(id) +
         '<span class="nm">' + d.name + (S.skin === id ? '<small>✓ In use</small>' : '') + '</span><span class="nt">' + d.note + '</span></button>'; }).join('') + '</div>';
