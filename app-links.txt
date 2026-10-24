@@ -1,0 +1,5 @@
+  app.gotgotneed:
+    ID: cfb395bf-3dee-4094-88db-52a75cca6d6c
+    Signatures: [1F:A9:23:0A:63:88:78:D7:17:4E:D4:3F:77:27:DC:CD:2A:67:E5:D4:2D:45:F7:66:AA:E3:1B:96:D0:C8:A7:4F]
+    Domain verification state:
+      vojnovicspasoje.github.io: verified

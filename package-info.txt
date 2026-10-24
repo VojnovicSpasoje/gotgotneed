@@ -1,0 +1,10 @@
+    flags=0x0
+    versionCode=20 minSdk=24 targetSdk=36
+    versionName=1.0
+    flags=[ HAS_CODE ALLOW_CLEAR_USER_DATA ALLOW_BACKUP ]
+    declared permissions:
+    requested permissions:
+      android.permission.INTERNET
+    install permissions:
+      android.permission.INTERNET: granted=true
+      runtime permissions:

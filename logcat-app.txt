@@ -1,0 +1,33 @@
+10-24 00:16:50.706  3057  3057 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-24 00:16:50.711  3057  3057 I AndroidRuntime: Using default boot image
+10-24 00:16:50.711  3057  3057 I AndroidRuntime: Leaving lock profiling enabled
+10-24 00:16:50.782  3057  3057 D nativeloader: InitDefaultPublicLibraries for_preload=1: libandroid.so:libaaudio.so:libamidi.so:libbinder_ndk.so:libc.so:libcamera2ndk.so:libdl.so:libEGL.so:libGLESv1_CM.so:libGLESv2.so:libGLESv3.so:libicu.so:libicui18n.so:libicuuc.so:libjnigraphics.so:liblog.so:libmediandk.so:libm.so:libnativehelper.so:libnativewindow.so:libOpenMAXAL.so:libOpenSLES.so:libRS.so:libstdc++.so:libsync.so:libvulkan.so:libwebviewchromium_plat_support.so:libz.so
+10-24 00:16:50.876  3057  3057 D AndroidRuntime: Calling main entry com.android.commands.monkey.Monkey
+10-24 00:16:51.905  3057  3057 I AndroidRuntime: VM exiting with result code 0.
+10-24 00:16:54.360  3140  3378 W chromium: [WARNING:dns_config_service_android.cc(115)] Failed to read DnsConfig.
+10-24 00:16:54.430   522   554 I ActivityManager: Start proc 3390:com.google.android.webview:sandboxed_process0:org.chromium.content.app.SandboxedProcessService0:0/u0ai9000 for  {app.gotgotneed/org.chromium.content.app.SandboxedProcessService0:0}
+10-24 00:16:54.560  3140  3383 E chromium: [ERROR:simple_version_upgrade.cc(152)] Failed to write a new fake index.
+10-24 00:16:54.561  3140  3406 E chromium: [ERROR:simple_version_upgrade.cc(152)] Failed to write a new fake index.
+10-24 00:16:54.768  3140  3140 D Capacitor: Starting BridgeActivity
+10-24 00:16:54.798  3390  3390 I cr_WebViewApkApp: Launched version=113.0.5672.136 minSdkVersion=29 isBundle=false processName=com.google.android.webview:sandboxed_process0:org.chromium.content.app.SandboxedProcessService0:0
+10-24 00:16:55.043   522   554 I ActivityManager: Start proc 3476:com.google.android.webview:webview_apk/u0a134 for service {com.google.android.webview/org.chromium.android_webview.nonembedded.AwComponentUpdateService}
+10-24 00:16:56.407  3476  3560 W cr_AWNetworkFetcherTask: 	at org.chromium.android_webview.nonembedded.NetworkFetcherTask.download(chromium-TrichromeWebViewGoogle6432.apk-stable-567263637:48)
+10-24 00:16:59.639  1435  3273 W .gms.persistent: Long monitor contention with owner CronetInit (3676) at void il.run()(:com.google.android.gms.dynamite_cronetdynamite@231818047@23.18.18 (190800-0):3) waiters=0 in iu org.chromium.net.impl.CronetUrlRequestContext.b(java.lang.String, org.chromium.net.UrlRequest$Callback, java.util.concurrent.Executor, int, java.util.Collection, boolean, boolean, boolean, boolean, int, boolean, int, org.chromium.net.RequestFinishedInfo$Listener, int, long) for 317ms
+10-24 00:17:17.525  3390  3390 I AndroidRuntime: VM exiting with result code 0, cleanup skipped.
+10-24 00:17:17.539   522   601 I ActivityManager: Killing 3390:com.google.android.webview:sandboxed_process0:org.chromium.content.app.SandboxedProcessService0:0/u0a192i0 (adj 0): isolated not needed
+10-24 00:17:17.724  4393  4393 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-24 00:17:17.734  4393  4393 I AndroidRuntime: Using default boot image
+10-24 00:17:17.734  4393  4393 I AndroidRuntime: Leaving lock profiling enabled
+10-24 00:17:17.869  4393  4393 D nativeloader: InitDefaultPublicLibraries for_preload=1: libandroid.so:libaaudio.so:libamidi.so:libbinder_ndk.so:libc.so:libcamera2ndk.so:libdl.so:libEGL.so:libGLESv1_CM.so:libGLESv2.so:libGLESv3.so:libicu.so:libicui18n.so:libicuuc.so:libjnigraphics.so:liblog.so:libmediandk.so:libm.so:libnativehelper.so:libnativewindow.so:libOpenMAXAL.so:libOpenSLES.so:libRS.so:libstdc++.so:libsync.so:libvulkan.so:libwebviewchromium_plat_support.so:libz.so
+10-24 00:17:17.927  4393  4393 D AndroidRuntime: Calling main entry com.android.commands.monkey.Monkey
+10-24 00:17:18.016  4393  4393 I AndroidRuntime: VM exiting with result code 0.
+10-24 00:17:19.158   522   554 I ActivityManager: Start proc 4441:com.google.android.webview:sandboxed_process0:org.chromium.content.app.SandboxedProcessService0:0/u0i1 for  {app.gotgotneed/org.chromium.content.app.SandboxedProcessService0:0}
+10-24 00:17:19.216  4411  4444 W chromium: [WARNING:dns_config_service_android.cc(115)] Failed to read DnsConfig.
+10-24 00:17:19.256  4411  4445 E chromium: [ERROR:simple_backend_impl.cc(749)] Simple Cache Backend: cache directory inaccessible right after creation; path: /data/user/0/app.gotgotneed/cache/WebView/Default/HTTP Cache/Code Cache/js
+10-24 00:17:19.256  4411  4448 E chromium: [ERROR:simple_version_upgrade.cc(152)] Failed to write a new fake index.
+10-24 00:17:19.259  4411  4456 E chromium: [ERROR:disk_cache.cc(205)] Unable to create cache
+10-24 00:17:19.329  4411  4411 D Capacitor: Starting BridgeActivity
+10-24 00:17:19.383  4441  4441 I cr_WebViewApkApp: Launched version=113.0.5672.136 minSdkVersion=29 isBundle=false processName=com.google.android.webview:sandboxed_process0:org.chromium.content.app.SandboxedProcessService0:0
+10-24 00:17:37.481   522  2533 I ActivityManager: Process com.google.android.webview:sandboxed_process0:org.chromium.content.app.SandboxedProcessService0:0 (pid 4441) has died: fg  BTOP
+10-24 00:17:37.481   522  2533 W ActivityManager: Scheduling restart of crashed service app.gotgotneed/org.chromium.content.app.SandboxedProcessService0:0 in 330830ms for connection
+10-24 00:17:44.444  4734  5619 I cr_CronetUrlRequestContext: destroyNativeStreamLocked org.chromium.net.impl.CronetBidirectionalStream@7d2f9b8
