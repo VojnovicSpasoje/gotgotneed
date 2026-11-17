@@ -91,6 +91,9 @@ details.panel summary::-webkit-details-marker{display:none}
 .tabs button[aria-pressed="true"]{color:var(--ink);border-color:var(--ink)}
 .tools{display:flex;flex-direction:column;gap:10px;margin-bottom:12px}
 .actrow{display:flex;align-items:center;gap:8px}
+.actbar{position:sticky;top:calc(env(safe-area-inset-top,0px) + var(--toph,64px));z-index:4;background:var(--bg);padding-block:6px;margin-top:-8px;transition:box-shadow .15s}
+.actbar.stuck{box-shadow:0 8px 8px -8px rgba(0,0,0,.25)}
+.acthint{margin:4px 0 12px}
 .actrow>.seg{min-width:0;flex-shrink:1;flex-wrap:nowrap}
 .actrow>.seg button{padding-left:clamp(6px,2.4vw,12px);padding-right:clamp(6px,2.4vw,12px)}
 .actend{display:flex;align-items:center;gap:8px;margin-left:auto;flex-shrink:0}

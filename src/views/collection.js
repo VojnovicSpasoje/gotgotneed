@@ -1,6 +1,6 @@
 // One collection: progress, editions, variants, the album grid/list and the trade lists.
 import { onAct, onInput } from '../core/events.js';
-import { registerView, render } from '../core/nav.js';
+import { onRender, registerView, render } from '../core/nav.js';
 import { S } from '../core/state.js';
 import { $, ICON, esc, fmtPct, pct } from '../core/util.js';
 import { bonusStats, cnt, colStats, edStats, inScope, itemsOf, ranges, setCnt } from '../data/model.js';
@@ -30,10 +30,11 @@ export function viewCol() {
   if (S.tab === 'trade') return h + tradeHTML(col, ed);
   const flt = [['all', 'All'], ['have', 'Have'], ['miss', 'Missing'], ['dup', 'Duplicates']];
   h += '<div class="tools">' + (showSearch(ed, vid) ? '<input class="search" id="q" type="search" placeholder="' + (ed.mode === 'range' ? 'Find a number…' : 'Search name or serial number…') + '" value="' + esc(S.q) + '">' : '') +
-    '<div class="rowwrap" style="justify-content:space-between"><div class="seg" role="group" aria-label="Filter">' + flt.map(([k, l]) => '<button type="button" data-act="filter" data-id="' + k + '" aria-pressed="' + (S.filter === k) + '">' + l + '</button>').join('') + '</div></div>' +
-    '<div class="actrow"><div class="seg" role="group" aria-label="Tap action">' + [['toggle', 'Mark'], ['plus', '+1'], ['minus', '−1']].map(([k, l]) => '<button type="button" data-act="mode" data-id="' + k + '" aria-pressed="' + (S.mode === k) + '">' + l + '</button>').join('') + '</div>' +
-    '<div class="actend"><button class="btn small" type="button" data-act="bulk">+ Add many</button>' + layoutBtn(ed) + '</div></div>' +
-    '<div class="hint">' + (S.mode === 'toggle' ? 'Tap to mark or unmark an item.' : S.mode === 'plus' ? 'Tap to add another copy (duplicate).' : 'Tap to remove one copy.') + '</div></div>';
+    '<div class="rowwrap" style="justify-content:space-between"><div class="seg" role="group" aria-label="Filter">' + flt.map(([k, l]) => '<button type="button" data-act="filter" data-id="' + k + '" aria-pressed="' + (S.filter === k) + '">' + l + '</button>').join('') + '</div></div></div>' +
+    // Mark / +1 / −1 stays at the top while you scroll a long list (sticks right under the header).
+    '<div class="actbar" id="actbar"><div class="actrow"><div class="seg" role="group" aria-label="Tap action">' + [['toggle', 'Mark'], ['plus', '+1'], ['minus', '−1']].map(([k, l]) => '<button type="button" data-act="mode" data-id="' + k + '" aria-pressed="' + (S.mode === k) + '">' + l + '</button>').join('') + '</div>' +
+    '<div class="actend"><button class="btn small" type="button" data-act="bulk">+ Add many</button>' + layoutBtn(ed) + '</div></div></div>' +
+    '<div class="hint acthint">' + (S.mode === 'toggle' ? 'Tap to mark or unmark an item.' : S.mode === 'plus' ? 'Tap to add another copy (duplicate).' : 'Tap to remove one copy.') + '</div>';
   h += '<div id="items">' + itemsHTML(col, ed, vid) + '</div>';
   return h;
 }
@@ -141,3 +142,18 @@ onAct({
   },
 });
 onInput(e => { if (e.target.id === 'q') { S.q = e.target.value; const col = curCol(); $('#items').innerHTML = itemsHTML(col, curEd(col), curVar(col)); return true; } });
+
+// The sticky action bar sits right under the sticky header, whose height differs per theme.
+function placeActbar() {
+  const top = document.querySelector('.top');
+  if (top) document.documentElement.style.setProperty('--toph', top.offsetHeight + 'px');
+  markStuck();
+}
+function markStuck() {
+  const bar = document.getElementById('actbar'), top = document.querySelector('.top');
+  if (bar && top) bar.classList.toggle('stuck', bar.getBoundingClientRect().top <= top.getBoundingClientRect().bottom + 1);
+}
+onRender(placeActbar);
+window.addEventListener('resize', placeActbar);
+window.addEventListener('scroll', markStuck, { passive: true });
+if (document.fonts) document.fonts.ready.then(placeActbar);
