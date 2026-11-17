@@ -9,10 +9,11 @@ import { SKINS, SKIN_ALIAS, applySkin } from '../themes/themes.js';
 // Other modules (e.g. the safety copy in IndexedDB) can listen for every save.
 const saveHooks = [];
 export const onSave = fn => saveHooks.push(fn);
-export function loadLocal() { try { const r = localStorage.getItem(LS); if (r) { const d = JSON.parse(r); if (d && Array.isArray(d.cols)) return d.cols.map(cleanCol).filter(Boolean); } } catch (e) {} return []; }
+export function loadLocal() { try { const r = localStorage.getItem(LS); if (r) { const d = JSON.parse(r); if (d && Array.isArray(d.cols)) return d.cols.map(raw => { const c = cleanCol(raw); if (c && raw.example === true) c.example = true; return c; }).filter(Boolean); } } catch (e) {} return []; }
 export function saveLocal() {
+  // Examples are kept too (marked), so they stay until the user creates a collection of their own.
   const cols = S.cols.filter(c => !c.example), saved = Date.now();
-  try { localStorage.setItem(LS, JSON.stringify({ cols, saved })); } catch (e) {}
+  try { localStorage.setItem(LS, JSON.stringify({ cols: S.cols, saved })); } catch (e) {}
   for (const f of saveHooks) { try { f(cols, saved); } catch (e) {} }
 }
 export function syncHTML() {
@@ -27,7 +28,8 @@ export function push(col) {
   chains[col.id] = (chains[col.id] || Promise.resolve()).then(() => ref.set(body)).then(() => setSync('cloud')).catch(() => setSync('error'));
 }
 export function touch(col) {
-  if (col.example) { col.example = false; S.cols = S.cols.filter(c => !c.example || c === col); }
+  // Editing an example makes it yours; the other examples stay (they go when you create your own collection).
+  if (col.example) col.example = false;
   col.updated = Date.now(); saveLocal();
   if (G.DB) {
     for (const id of pending) { const c = S.cols.find(x => x.id === id); if (c && c !== col) push(c); }

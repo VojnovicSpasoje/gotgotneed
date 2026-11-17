@@ -5,7 +5,7 @@ import { S } from '../core/state.js';
 import { $, ICON, esc, fmtPct, pct } from '../core/util.js';
 import { bonusStats, cnt, colStats, edStats, inScope, itemsOf, ranges, setCnt } from '../data/model.js';
 import { curCol, curEd, curVar } from '../data/select.js';
-import { touch } from '../data/store.js';
+import { saveLocal, touch } from '../data/store.js';
 import { lastTap, toast } from '../ui/toast.js';
 import { viewHome } from './home.js';
 
@@ -134,7 +134,7 @@ onAct({
   tap: ({ b, col }) => applyTap(col, curEd(col), b.dataset.k, S.mode),
   inc: ({ b, col }) => applyTap(col, curEd(col), b.dataset.k, 'plus'),
   dec: ({ b, col }) => applyTap(col, curEd(col), b.dataset.k, 'minus'),
-  lview: ({ id, col }) => { const ed = curEd(col); ed.view = id; touch(col); render(); },
+  lview: ({ id, col }) => { const ed = curEd(col); ed.view = id; if (col.example) saveLocal(); else touch(col); render(); },
   copy: ({ id }) => {
     const ta = document.getElementById(id); const t = ta.value;
     const fallback = () => { ta.focus(); ta.select(); toast('Text selected — copy it manually'); };
