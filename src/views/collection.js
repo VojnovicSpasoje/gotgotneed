@@ -22,7 +22,7 @@ export function viewCol() {
   h += '<div class="hero" id="hero">' + heroHTML(col, ed, vid, cs, es) + '</div>';
   h += '<div class="chips" role="group" aria-label="Editions">' + col.editions.map(e => { const s = edStats(col, e);
     return '<button class="chip" type="button" data-act="ed" data-id="' + e.id + '" aria-pressed="' + (e.id === ed.id) + '">' + esc(e.name) + ' <small>' + Math.floor(pct(s.owned, s.total)) + '%</small></button>'; }).join('') +
-    '<button class="chip" type="button" data-act="edit" style="border-style:dashed">+ Edition</button></div>';
+    '<button class="chip chip-add" type="button" data-act="addEd">+ Edition</button></div>';
   const vvis = col.variants.filter(v => edStats(col, ed, v.id).total > 0);
   if (vvis.length > 1) h += '<div class="chips" role="group" aria-label="Variants">' + vvis.map(v => { const s = edStats(col, ed, v.id);
     return '<button class="chip" type="button" data-act="var" data-id="' + v.id + '" aria-pressed="' + (v.id === vid) + '">' + (v.bonus ? '★ ' : '') + esc(v.name) + ' <small>' + s.owned + '/' + s.total + '</small></button>'; }).join('') + '</div>';

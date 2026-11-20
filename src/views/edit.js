@@ -51,6 +51,14 @@ export function viewEdit() {
 registerView('edit', viewEdit, 2);
 onAct({
   edit: () => { S.confirm = null; S.addMode = 'range'; go('edit'); },
+  // "+ Edition" on the collection screen: open Edit straight at the "Add edition" form, ready to type.
+  addEd: () => {
+    S.confirm = null; S.addMode = 'range'; go('edit');
+    const form = document.querySelector('[data-form="added"]'), top = document.querySelector('.top');
+    if (!form) return;
+    scrollTo(0, form.getBoundingClientRect().top + scrollY - (top ? top.offsetHeight : 0) - 12);
+    const name = document.getElementById('aName'); if (name) name.focus({ preventScroll: true });
+  },
   cancel: () => { S.confirm = null; render(); },
   delcol: ({ col }) => {
     const idx = S.cols.indexOf(col), copy = clone(col);
