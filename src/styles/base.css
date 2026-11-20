@@ -1,5 +1,8 @@
 /* Layout and components shared by every screen. Theme files only add their own touches on top. */
 *{box-sizing:border-box}
+/* No blue Android highlight or text selection when a finger rests on a button or item (press'n'hold). Inputs and the swap lists stay selectable. */
+html{-webkit-tap-highlight-color:transparent}
+button,[data-act],label.btn,.setrow,.chip,.seg{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
 body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.45;
   padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 96px}
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
