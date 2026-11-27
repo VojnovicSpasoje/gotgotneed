@@ -58,3 +58,5 @@
 :root[data-skin="pixel"] .viewbtn{border:2px solid var(--ink);border-radius:0}
 :root[data-skin="pixel"] .actrow>.seg button{padding-left:clamp(5px,2vw,12px);padding-right:clamp(5px,2vw,12px)}
 :root[data-skin="pixel"] .setbox{border:2px solid var(--ink);border-radius:0}:root[data-skin="pixel"] .setswitch i,:root[data-skin="pixel"] .setswitch i::after{border-radius:0}
+/* Readable unselected options on the darker strip. */
+:root[data-skin="pixel"] .seg button{color:var(--ink)}

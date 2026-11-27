@@ -26,7 +26,7 @@
 :root[data-skin="album"] .bar{background:var(--sunk);height:7px;border-radius:2px}
 :root[data-skin="album"] .bar span{background:repeating-linear-gradient(-55deg,var(--have) 0 1.6px,transparent 1.6px 4px)}
 :root[data-skin="album"] .grid{gap:2px 6px}
-:root[data-skin="album"] .slot{aspect-ratio:1/1;border:0;border-radius:50%;background:transparent;color:#9A917C;font-weight:700;font-size:17px}
+:root[data-skin="album"] .slot{aspect-ratio:1/1;border:0;border-radius:50%;background:transparent;color:#736B5C;font-weight:700;font-size:17px}
 :root[data-skin="album"] .slot.on{border:0;background:transparent;color:var(--ink)}
 :root[data-skin="album"] .slot.on::before{content:"";position:absolute;inset:4% 2%;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 60' preserveAspectRatio='none'%3E%3Cpath d='M34 7C17 5 5 17 7 32s16 23 31 20 17-18 13-29C46 12 33 6 20 11' fill='none' stroke='%233F4555' stroke-width='2.6' stroke-linecap='round' opacity='.85'/%3E%3Cpath d='M30 9C16 9 9 20 10 33s14 19 28 17' fill='none' stroke='%233F4555' stroke-width='1.2' stroke-linecap='round' opacity='.35'/%3E%3C/svg%3E") center/100% 100% no-repeat;transform:rotate(-6deg);pointer-events:none}
 :root[data-skin="album"] .slot.on:nth-child(2n)::before{transform:rotate(9deg) scaleX(-1)}
@@ -49,7 +49,7 @@
 :root[data-skin="album"] .item .check{display:none}
 :root[data-skin="album"] .check svg{display:none}
 :root[data-skin="album"] .check.on{background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 60'%3E%3Cpath d='M9 33c5 3 9 8 13 15 7-15 17-28 31-38' fill='none' stroke='%233F4555' stroke-width='4' stroke-linecap='round' stroke-linejoin='round' opacity='.9'/%3E%3C/svg%3E") center/90% no-repeat;border:0}
-:root[data-skin="album"] .nm{font-family:var(--f-mono);font-weight:700;color:#9A917C}
+:root[data-skin="album"] .item .nm{font-family:var(--f-mono);font-weight:700;color:#736B5C}
 :root[data-skin="album"] .item.on .nm{color:var(--ink)}
 :root[data-skin="album"] .nmt{position:relative;display:inline-block;padding:8px 6px;margin-left:22px}
 :root[data-skin="album"] .item.on .nmt::before{content:"";position:absolute;inset:-4px -26px -6px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 60' preserveAspectRatio='none'%3E%3Cpath d='M34 7C17 5 5 17 7 32s16 23 31 20 17-18 13-29C46 12 33 6 20 11' fill='none' stroke='%233F4555' stroke-width='2.4' stroke-linecap='round' opacity='.85' vector-effect='non-scaling-stroke'/%3E%3Cpath d='M30 9C16 9 9 20 10 33s14 19 28 17' fill='none' stroke='%233F4555' stroke-width='1.1' stroke-linecap='round' opacity='.35' vector-effect='non-scaling-stroke'/%3E%3C/svg%3E") center/100% 100% no-repeat;transform:rotate(-2deg);pointer-events:none}

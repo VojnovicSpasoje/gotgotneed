@@ -17,7 +17,9 @@ export function saveLocal() {
   for (const f of saveHooks) { try { f(cols, saved); } catch (e) {} }
 }
 export function syncHTML() {
-  const txt = S.sync === 'cloud' ? 'Saved to your account' : S.sync === 'error' ? 'Could not save' : 'This device only';
+  // Only shown when it tells something (account sync); data kept on the phone is the normal case.
+  if (S.sync !== 'cloud' && S.sync !== 'error') return '<span id="sync" hidden></span>';
+  const txt = S.sync === 'cloud' ? 'Saved to your account' : 'Could not save';
   return '<span id="sync" class="sync ' + S.sync + '"><i></i>' + txt + '</span>';
 }
 export function setSync(s) { S.sync = s; const el = $('#sync'); if (el) el.outerHTML = syncHTML(); }

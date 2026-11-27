@@ -154,6 +154,10 @@ function markStuck() {
   if (bar && top) bar.classList.toggle('stuck', bar.getBoundingClientRect().top <= top.getBoundingClientRect().bottom + 1);
 }
 onRender(placeActbar);
+// "+ Edition" gets a fade on its left only while some editions are scrolled behind it.
+function markChips(row) { if (row) row.classList.toggle('more', row.scrollLeft + row.clientWidth < row.scrollWidth - 2); }
+onRender(() => { const a = document.querySelector('.chip-add'); markChips(a && a.parentElement); });
+document.addEventListener('scroll', e => { if (e.target.classList && e.target.querySelector && e.target.querySelector('.chip-add')) markChips(e.target); }, true);
 window.addEventListener('resize', placeActbar);
 window.addEventListener('scroll', markStuck, { passive: true });
 if (document.fonts) document.fonts.ready.then(placeActbar);
