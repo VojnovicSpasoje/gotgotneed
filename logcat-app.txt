@@ -1,0 +1,29 @@
+11-27 22:10:57.077  2586  2586 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-27 22:10:57.082  2586  2586 I AndroidRuntime: Using default boot image
+11-27 22:10:57.082  2586  2586 I AndroidRuntime: Leaving lock profiling enabled
+11-27 22:10:57.180  2586  2586 D nativeloader: InitDefaultPublicLibraries for_preload=1: libandroid.so:libaaudio.so:libamidi.so:libbinder_ndk.so:libc.so:libcamera2ndk.so:libdl.so:libEGL.so:libGLESv1_CM.so:libGLESv2.so:libGLESv3.so:libicu.so:libicui18n.so:libicuuc.so:libjnigraphics.so:liblog.so:libmediandk.so:libm.so:libnativehelper.so:libnativewindow.so:libOpenMAXAL.so:libOpenSLES.so:libRS.so:libstdc++.so:libsync.so:libvulkan.so:libwebviewchromium_plat_support.so:libz.so
+11-27 22:10:57.257  2586  2586 D AndroidRuntime: Calling main entry com.android.commands.monkey.Monkey
+11-27 22:10:58.886  2586  2586 I AndroidRuntime: VM exiting with result code 0.
+11-27 22:10:59.459   519   549 I ActivityManager: Start proc 2809:com.android.chrome/u0a150 for service {com.android.chrome/org.chromium.chrome.browser.customtabs.CustomTabsConnectionService}
+11-27 22:11:00.130   519   549 I ActivityManager: Start proc 2906:com.google.android.webview:webview_service/u0a134 for service {com.google.android.webview/org.chromium.android_webview.services.VariationsSeedServer}
+11-27 22:11:00.915   519   549 I ActivityManager: Start proc 2985:com.google.android.webview:sandboxed_process0:org.chromium.content.app.SandboxedProcessService0:0/u0ai9000 for  {app.gotgotneed/org.chromium.content.app.SandboxedProcessService0:0}
+11-27 22:11:01.042  2710  2992 W chromium: [WARNING:dns_config_service_android.cc(115)] Failed to read DnsConfig.
+11-27 22:11:01.327  2985  2985 I cr_WebViewApkApp: Launched version=113.0.5672.136 minSdkVersion=29 isBundle=false processName=com.google.android.webview:sandboxed_process0:org.chromium.content.app.SandboxedProcessService0:0
+11-27 22:11:02.043  2710  2710 D Capacitor: Starting BridgeActivity
+11-27 22:11:02.485   519   781 W JobServiceContext: Sending onNetworkChanged for a job that isn't started. JobStatus{5f05d26 #u0a134/110 com.google.android.webview/org.chromium.android_webview.nonembedded.AwComponentUpdateService u=0 s=10134 NET READY}
+11-27 22:11:02.699   519   549 I ActivityManager: Start proc 3216:com.google.android.webview:webview_apk/u0a134 for service {com.google.android.webview/org.chromium.android_webview.nonembedded.AwComponentUpdateService}
+11-27 22:11:05.197  3216  3426 W cr_AWNetworkFetcherTask: 	at org.chromium.android_webview.nonembedded.NetworkFetcherTask.download(chromium-TrichromeWebViewGoogle6432.apk-stable-567263637:48)
+11-27 22:11:24.745   519  2000 I ActivityManager: Killing 2985:com.google.android.webview:sandboxed_process0:org.chromium.content.app.SandboxedProcessService0:0/u0a192i0 (adj 0): isolated not needed
+11-27 22:11:24.948  4719  4719 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-27 22:11:25.034  4719  4719 I AndroidRuntime: Using default boot image
+11-27 22:11:25.034  4719  4719 I AndroidRuntime: Leaving lock profiling enabled
+11-27 22:11:25.201  4719  4719 D nativeloader: InitDefaultPublicLibraries for_preload=1: libandroid.so:libaaudio.so:libamidi.so:libbinder_ndk.so:libc.so:libcamera2ndk.so:libdl.so:libEGL.so:libGLESv1_CM.so:libGLESv2.so:libGLESv3.so:libicu.so:libicui18n.so:libicuuc.so:libjnigraphics.so:liblog.so:libmediandk.so:libm.so:libnativehelper.so:libnativewindow.so:libOpenMAXAL.so:libOpenSLES.so:libRS.so:libstdc++.so:libsync.so:libvulkan.so:libwebviewchromium_plat_support.so:libz.so
+11-27 22:11:25.307  4719  4719 D AndroidRuntime: Calling main entry com.android.commands.monkey.Monkey
+11-27 22:11:25.417  4719  4719 I AndroidRuntime: VM exiting with result code 0.
+11-27 22:11:26.512   519   549 I ActivityManager: Start proc 4793:com.google.android.webview:sandboxed_process0:org.chromium.content.app.SandboxedProcessService0:0/u0i1 for  {app.gotgotneed/org.chromium.content.app.SandboxedProcessService0:0}
+11-27 22:11:26.527  4754  4791 W chromium: [WARNING:dns_config_service_android.cc(115)] Failed to read DnsConfig.
+11-27 22:11:26.613  4793  4793 I cr_WebViewApkApp: Launched version=113.0.5672.136 minSdkVersion=29 isBundle=false processName=com.google.android.webview:sandboxed_process0:org.chromium.content.app.SandboxedProcessService0:0
+11-27 22:11:26.646  4754  4754 D Capacitor: Starting BridgeActivity
+11-27 22:11:35.865  4335  5047 I cr_CronetUrlRequestContext: destroyNativeStreamLocked org.chromium.net.impl.CronetBidirectionalStream@adf6de3
+11-27 22:11:50.231   519   535 W ActivityManager: Exception when unbinding service app.gotgotneed/org.chromium.content.app.SandboxedProcessService0:0
+11-27 22:11:50.232   519   535 I ActivityManager: Killing 4793:com.google.android.webview:sandboxed_process0:org.chromium.content.app.SandboxedProcessService0:0/u0a192i1 (adj 900): isolated not needed
