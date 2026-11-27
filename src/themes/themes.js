@@ -6,7 +6,8 @@ import { ICON } from '../core/util.js';
 import { toast } from '../ui/toast.js';
 
 export const SKINS = {
-  classic: { name: 'Classic', note: 'Clean and simple. Light, dark, or follows your phone.' },
+  classic: { name: 'Classic Light', note: 'Clean and simple.' },
+  'classic-dark': { name: 'Classic Dark', note: 'Clean and simple, calm and dark.', base: 'classic', theme: 'dark' },
   album: { name: 'Album', note: 'Paper pages. Items you have are circled in pencil.', scheme: 'light',
     t: { bg: '#F4EEDF', surface: '#FBF8EF', sunk: '#ECE4D0', ink: '#2B2A33', muted: '#635E53', line: '#D9CFB8', accent: '#2F4A8A', 'accent-ink': '#FBF8EF', have: '#3F4555', 'have-ink': '#FBF8EF', dup: '#B23A2E', 'dup-soft': '#F6E2D6', danger: '#B23A2E',
       'f-display': '"Caveat", "Segoe Print", cursive', 'f-mono': '"Courier Prime", "Courier New", monospace' } },
@@ -29,10 +30,9 @@ export function applySkin(id) {
   for (const k of SKIN_TOKENS) de.style.removeProperty('--' + k);
   de.style.removeProperty('color-scheme');
   if (d.t) { for (const [k, v] of Object.entries(d.t)) de.style.setProperty('--' + k, v); de.style.setProperty('color-scheme', d.scheme); }
-  de.setAttribute('data-skin', sk);
-  // Classic can be forced light or dark; otherwise it follows the phone.
-  const m = sk === 'classic' ? loadMode() : 'auto';
-  if (m === 'light' || m === 'dark') de.setAttribute('data-theme', m); else de.removeAttribute('data-theme');
+  // Classic Dark uses Classic's styles with the dark colours; Classic Light is always light.
+  de.setAttribute('data-skin', d.base || sk);
+  if (sk === 'classic') de.setAttribute('data-theme', 'light'); else if (d.theme) de.setAttribute('data-theme', d.theme); else de.removeAttribute('data-theme');
   syncBars();
 }
 // Phone status bar (and, where Android allows, the navigation bar) take the theme's background colour.
@@ -41,18 +41,25 @@ export function syncBars() {
   const c = getComputedStyle(document.body).backgroundColor; if (c) m.setAttribute('content', c);
 }
 try { matchMedia('(prefers-color-scheme: dark)').addEventListener('change', syncBars); } catch (e) {}
-// Classic theme mode: 'auto' (follow the phone), 'light' or 'dark'.
-const MODES = ['auto', 'light', 'dark'];
-export function loadMode() { try { const m = localStorage.getItem('ggn.mode'); return MODES.includes(m) ? m : 'auto'; } catch (e) { return 'auto'; } }
-function saveMode(m) { try { localStorage.setItem('ggn.mode', m); } catch (e) {} }
-export function loadSkin() { try { return localStorage.getItem('kolekcionar.skin') || 'classic'; } catch (e) { return 'classic'; } }
+// No theme chosen yet (or the old Classic that followed the phone): start with the Classic that matches the phone.
+const phoneDark = () => { try { return matchMedia('(prefers-color-scheme: dark)').matches; } catch (e) { return false; } };
+export function loadSkin() {
+  let s = null, fixed = null;
+  try { s = localStorage.getItem('kolekcionar.skin'); fixed = localStorage.getItem('ggn.classic2'); } catch (e) {}
+  if ((!s || s === 'classic') && !fixed) {
+    s = phoneDark() ? 'classic-dark' : 'classic';
+    try { localStorage.setItem('ggn.classic2', '1'); if (localStorage.getItem('kolekcionar.skin')) localStorage.setItem('kolekcionar.skin', s); } catch (e) {}
+  }
+  return s || 'classic';
+}
 export function saveSkin() {
   try { localStorage.setItem('kolekcionar.skin', S.skin); } catch (e) {}
   if (G.DB) G.DB.collection('data/users/' + G.UID).doc('_settings').set({ skin: S.skin }).catch(() => {});
 }
 export function skinPreview(id) {
   const slot = (n, on, dup) => '<i class="' + (on ? 'on' : '') + '">' + n + (dup ? '<b></b>' : '') + '</i>';
-  return '<div class="sk-prev" data-p="' + id + '"' + (id === 'classic' ? ' data-m="' + loadMode() + '"' : '') + '><div class="sk-title"><span>Aa</span><span>62%</span></div><div class="sk-bar"><span></span></div>' +
+  const d = SKINS[id] || {};
+  return '<div class="sk-prev" data-p="' + (d.base || id) + '"' + (id === 'classic' ? ' data-m="light"' : d.theme ? ' data-m="' + d.theme + '"' : '') + '><div class="sk-title"><span>Aa</span><span>62%</span></div><div class="sk-bar"><span></span></div>' +
     '<div class="sk-slots">' + slot(1, 1) + slot(2, 1, 1) + slot(3) + slot(4, 1) + slot(5) + slot(6, 1) + '</div></div>';
 }
 export function viewSkins() {
@@ -60,14 +67,11 @@ export function viewSkins() {
     '<p class="hint" style="margin:0 0 14px">Pick a look. It applies right away and is saved on this phone.</p>' +
     '<div class="skins">' + Object.keys(SKINS).map(id => { const d = SKINS[id];
       return '<button class="skin" type="button" data-act="skin" data-id="' + id + '" aria-pressed="' + (S.skin === id) + '">' + skinPreview(id) +
-        '<span class="nm">' + d.name + (S.skin === id ? '<small>✓ In use</small>' : '') + '</span><span class="nt">' + d.note + '</span></button>'; }).join('') + '</div>' +
-    (S.skin === 'classic' ? '<div class="field" style="margin-top:18px"><span class="label">Classic: light or dark</span><div class="seg" role="group" aria-label="Classic light or dark">' +
-      [['auto', 'Like my phone'], ['light', 'Light'], ['dark', 'Dark']].map(([k, l]) => '<button type="button" data-act="cmode" data-id="' + k + '" aria-pressed="' + (loadMode() === k) + '">' + l + '</button>').join('') + '</div></div>' : '');
+        '<span class="nm">' + d.name + (S.skin === id ? '<small>✓ In use</small>' : '') + '</span><span class="nt">' + d.note + '</span></button>'; }).join('') + '</div>';
 }
 
 registerView('themes', viewSkins, 2);
 onAct({
   themes: () => go('themes'),
   skin: ({ id }) => { applySkin(id); saveSkin(); render(); toast(SKINS[S.skin].name + ' theme on'); },
-  cmode: ({ id }) => { saveMode(id); applySkin(S.skin); render(); },
 });
